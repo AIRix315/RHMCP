@@ -15,13 +15,23 @@ export interface RunningHubConfig {
   logging: LogConfig;
 }
 
+/**
+ * 存储模式：
+ * - local: 下载文件到本地目录，返回本地路径
+ * - network: 上传到云存储，返回云端URL
+ * - auto: Agent自动判断，需要继续处理返回URL，需交付用户则下载
+ * - none: 仅返回RunningHub服务器原始URL，不做任何处理
+ */
+export type StorageMode = "local" | "network" | "auto" | "none";
+
 export interface StorageConfig {
-  type: "local" | "baidu" | "google";
+  mode: StorageMode;
   path: string;
   cloudConfig?: CloudStorageConfig;
 }
 
 export interface CloudStorageConfig {
+  provider: "baidu" | "google" | "aliyun" | "aws";
   accessKey?: string;
   secretKey?: string;
   bucket?: string;

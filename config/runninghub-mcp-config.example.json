@@ -1,22 +1,53 @@
 {
+  "_comment": "RunningHub MCP 配置文件 - 请根据您的实际情况修改",
+
   "apiKey": "YOUR_API_KEY_HERE",
-  "baseUrl": "www.runninghub.ai",
+  "_apiKey_comment": "必填！从 RunningHub 个人中心获取 API Key",
+
+  "baseUrl": "www.runninghub.cn",
+  "_baseUrl_comment": "必填！根据您的账号和服务器位置选择：www.runninghub.cn（国内站）或 www.runninghub.ai（国际站）",
+
   "maxConcurrent": 1,
+
   "storage": {
-    "type": "local",
-    "path": "./output"
+    "mode": "local",
+    "_mode_comment": "存储模式：local（下载到本地）、network（云存储）、auto（自动判断）、none（不保存）",
+    "path": "./output",
+    "_path_comment": "本地存储路径（mode=local时使用）",
+    "cloudConfig": {
+      "_comment": "云存储配置（mode=network时必填）",
+      "provider": "baidu",
+      "_provider_comment": "云存储提供商：baidu/google/aliyun/aws",
+      "accessKey": "YOUR_ACCESS_KEY",
+      "secretKey": "YOUR_SECRET_KEY",
+      "bucket": "YOUR_BUCKET_NAME",
+      "region": "YOUR_REGION"
+    }
   },
-  "apps": {},
+
+  "apps": {
+    "_comment": "APP配置，每个APP代表一个ComfyUI工作流",
+    "example-app": {
+      "appId": "YOUR_APP_ID",
+      "alias": "example-app",
+      "category": "image",
+      "description": "示例APP",
+      "inputs": {}
+    }
+  },
+
   "modelRules": {
     "source": "github",
     "repo": "your-username/runninghub-model-rules",
     "branch": "main"
   },
+
   "retry": {
     "maxRetries": 3,
     "maxWaitTime": 600,
     "interval": 5
   },
+
   "logging": {
     "level": "info"
   }

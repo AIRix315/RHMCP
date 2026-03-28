@@ -37,7 +37,10 @@ export class RunningHubClient {
     const formData = new FormData();
     formData.append("apiKey", this.apiKey);
     formData.append("fileType", fileType);
-    formData.append("file", new Blob([file.buffer as ArrayBuffer]), "upload");
+    // Create a new ArrayBuffer copy to avoid SharedArrayBuffer issues
+    const arrayBuffer = new ArrayBuffer(file.length);
+    new Uint8Array(arrayBuffer).set(file);
+    formData.append("file", new Blob([arrayBuffer]), "upload");
 
     const response = await fetch(
       `https://${this.baseUrl}/task/openapi/upload`,

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
-import { NodeInfo, RetryConfig, AppConfig } from "../types.js";
+import { NodeInfo, RetryConfig, AppConfig, StorageConfig } from "../types.js";
+import { processOutput, ensureOutputDir } from "../utils/storage.js";
 
 const ExecuteAppSchema = z.object({
   appId: z.string().optional().describe("APP ID"),
@@ -24,7 +25,7 @@ export const executeAppTool = {
     config: {
       apps: Record<string, AppConfig>;
       retry: RetryConfig;
-      storage: { path: string };
+      storage: StorageConfig;
     },
   ) {
     // 1. 解析APP ID
@@ -81,8 +82,38 @@ export const executeAppTool = {
     while (Date.now() - startTime < maxWait * 1000) {
       const result = await client.queryTask(taskId);
 
-      if (result.code === 0) {
-        return { taskId, status: "SUCCESS", outputs: result.data };
+      if (result.code === 0 && result.data) {
+        // 6. 根据存储模式处理生成物
+        const storageMode = config.storage?.mode || "local";
+        const outputPath = config.storage?.path || "./output";
+
+        // 确保输出目录存在
+        if (storageMode === "local" || storageMode === "auto") {
+          ensureOutputDir(outputPath);
+        }
+
+        const processedOutputs = [];
+        for (let i = 0; i < result.data.length; i++) {
+          const output = result.data[i] as any;
+          if (output.fileUrl) {
+            const processed = await processOutput(
+              output.fileUrl,
+              `${i + 1}`,
+              config.storage,
+              taskId,
+            );
+            processedOutputs.push({
+              ...output,
+              originalUrl: processed.originalUrl,
+              localPath: processed.localPath,
+              storageMode: processed.mode,
+            });
+          } else {
+            processedOutputs.push(output);
+          }
+        }
+
+        return { taskId, status: "SUCCESS", outputs: processedOutputs };
       }
 
       if (result.code === 805) {

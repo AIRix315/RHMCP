@@ -16,6 +16,7 @@
  */
 
 import { createClient } from "./dist/api/client.js";
+import { processOutput, ensureOutputDir } from "./dist/utils/storage.js";
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 
@@ -36,7 +37,7 @@ function loadConfig() {
       apiKey,
       baseUrl: config.baseUrl || "www.runninghub.cn",
       maxConcurrent: config.maxConcurrent || 1,
-      storage: config.storage || { type: "local", path: "./output" },
+      storage: config.storage || { mode: "local", path: "./output" },
       apps: config.apps || {},
       modelRules: config.modelRules || { rules: {}, defaultLanguage: "zh" },
       retry: config.retry || { maxRetries: 3, maxWaitTime: 600, interval: 5 },
@@ -49,7 +50,7 @@ function loadConfig() {
       apiKey: process.env.RUNNINGHUB_API_KEY,
       baseUrl: "www.runninghub.cn",
       maxConcurrent: 1,
-      storage: { type: "local", path: "./output" },
+      storage: { mode: "local", path: "./output" },
       apps: {},
       modelRules: { rules: {}, defaultLanguage: "zh" },
       retry: { maxRetries: 3, maxWaitTime: 600, interval: 5 },
@@ -73,21 +74,24 @@ async function main() {
   try {
     config = loadConfig();
     console.log("✓ Configuration loaded");
-    if (config.apiKey) {
-      console.log(
-        `  - API Key: ${config.apiKey.substring(0, 4)}***${config.apiKey.slice(-4)}`,
-      );
-    } else {
-      console.log("  - API Key: NOT SET");
-    }
+    console.log(
+      `  - API Key: ${config.apiKey.substring(0, 4)}***${config.apiKey.slice(-4)}`,
+    );
     console.log(`  - Base URL: ${config.baseUrl}`);
+    console.log(`  - Storage Mode: ${config.storage?.mode || "local"}`);
+    console.log(`  - Output Path: ${config.storage?.path || "./output"}`);
   } catch (error) {
     console.error("✗ Failed to load configuration:", error.message);
     process.exit(1);
   }
 
-  const client = createClient(config);
+  // Ensure output directory exists
+  const outputDir = config.storage?.path || "./output";
+  ensureOutputDir(outputDir);
+  console.log(`  - Output directory: ${outputDir}`);
   console.log("");
+
+  const client = createClient(config);
 
   // Test 1: Get APP Info
   console.log("Test 1: Get APP Info");
@@ -109,11 +113,6 @@ async function main() {
         appInfoResult.data.nodeInfoList.slice(0, 5).forEach((node) => {
           console.log(`    - ${node.fieldName}: ${node.fieldType}`);
         });
-        if (appInfoResult.data.nodeInfoList.length > 5) {
-          console.log(
-            `    ... and ${appInfoResult.data.nodeInfoList.length - 5} more`,
-          );
-        }
       }
     } else {
       console.log("✗ Failed to get APP info");
@@ -127,26 +126,25 @@ async function main() {
   // Test 2: Execute APP (Text to Image)
   console.log("Test 2: Execute APP (Text to Image)");
   console.log("-".repeat(40));
-  console.log(
-    "  Note: This test requires a valid APP with text-to-image capability",
-  );
   console.log("  Using APP ID:", TEST_APP_ID);
   console.log("");
 
   try {
     const nodeInfoList = appInfoResult?.data?.nodeInfoList || [];
-
-    // Find the prompt parameter (first STRING type node)
     const promptNode = nodeInfoList.find(
       (n) => n.fieldType === "STRING" || n.fieldName === "text",
     );
 
     if (!promptNode) {
       console.log("⚠ No prompt parameter found in APP config");
-      console.log("  Available nodes:", nodeInfoList.map(n => `${n.fieldName}(${n.fieldType})`).join(", "));
-      console.log("  Skipping execute test");
+      console.log(
+        "  Available nodes:",
+        nodeInfoList.map((n) => `${n.fieldName}(${n.fieldType})`).join(", "),
+      );
     } else {
-      console.log(`  Found prompt node: ${promptNode.fieldName} (${promptNode.fieldType})`);
+      console.log(
+        `  Found prompt node: ${promptNode.fieldName} (${promptNode.fieldType})`,
+      );
       console.log(
         '  Submitting task with prompt: "A beautiful sunset over mountains"',
       );
@@ -171,29 +169,47 @@ async function main() {
         console.log("  Waiting for result (max 5 minutes)...");
 
         const startTime = Date.now();
-        const maxWait = 5 * 60 * 1000; // 5 minutes
-        const pollInterval = 5 * 1000; // 5 seconds
+        const maxWait = 5 * 60 * 1000;
+        const pollInterval = 5 * 1000;
 
         while (Date.now() - startTime < maxWait) {
           const taskResult = await client.queryTask(taskId);
 
-          if (taskResult.code === 0) {
+          if (taskResult.code === 0 && taskResult.data) {
             console.log("✓ Task completed successfully");
-            console.log("  - Output:");
-            if (taskResult.data) {
-              taskResult.data.forEach((output, i) => {
+            console.log("  - Outputs:");
+
+            // Process each output based on storage mode
+            for (let i = 0; i < taskResult.data.length; i++) {
+              const output = taskResult.data[i];
+              console.log(
+                `    [${i + 1}] Original URL: ${output.fileUrl || "N/A"}`,
+              );
+
+              if (output.fileUrl) {
+                // Test storage processing
                 console.log(
-                  `    [${i + 1}] ${output.fileUrl || JSON.stringify(output)}`,
+                  `        Processing with storage mode: ${config.storage?.mode || "local"}`,
                 );
-              });
+                const processed = await processOutput(
+                  output.fileUrl,
+                  `${taskId}_${i + 1}`,
+                  config.storage,
+                  taskId,
+                );
+
+                if (processed.localPath) {
+                  console.log(
+                    `        ✓ Downloaded to: ${processed.localPath}`,
+                  );
+                }
+                if (processed.originalUrl) {
+                  console.log(`        Original URL: ${processed.originalUrl}`);
+                }
+              }
             }
 
             // Save result
-            const outputDir = join(process.cwd(), "output");
-            if (!existsSync(outputDir)) {
-              mkdirSync(outputDir, { recursive: true });
-            }
-
             const resultPath = join(
               outputDir,
               `test-result-${Date.now()}.json`,
@@ -211,11 +227,9 @@ async function main() {
                 2,
               ),
             );
-
             console.log(`  - Result saved to: ${resultPath}`);
             break;
           } else if (taskResult.code === 804 || taskResult.code === 813) {
-            // Task still running or queued
             process.stdout.write(
               `\r  - Status: ${taskResult.code === 804 ? "RUNNING" : "QUEUED"}... `,
             );
@@ -241,12 +255,16 @@ async function main() {
     }
   } catch (error) {
     console.error("✗ Exception:", error.message);
+    console.error(error.stack);
   }
 
   console.log("");
   console.log("=".repeat(60));
   console.log("Test Complete");
   console.log("=".repeat(60));
+  console.log("");
+  console.log("Storage mode used:", config.storage?.mode || "local");
+  console.log("Output directory:", outputDir);
 }
 
 main().catch((error) => {
