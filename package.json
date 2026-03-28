@@ -4,10 +4,14 @@
   "description": "RunningHub AI Platform MCP Server",
   "type": "module",
   "main": "dist/server/index.js",
+  "bin": {
+    "runninghub-mcp": "./dist/server/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/server/index.js",
-    "dev": "tsx src/server/index.ts"
+    "dev": "tsx src/server/index.ts",
+    "dev:stdio": "tsx src/server/index.ts --stdio"
   },
   "keywords": ["mcp", "runninghub", "ai"],
   "author": "",

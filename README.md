@@ -7,11 +7,12 @@
 
 ## 快速链接
 
-| 文档                                | 说明                                     |
-| ----------------------------------- | ---------------------------------------- |
-| **[用户指南](docs/USER_GUIDE.md)**  | 完整使用教程，含 RunningHub APP 设置指南 |
-| **[部署指南](docs/SETUP_GUIDE.md)** | OpenCode/Claude Desktop 接入配置         |
-| **[共享测试 APP](#共享测试-app)**   | 免费测试 APP ID，快速体验                |
+| 文档                                    | 说明                                       |
+| --------------------------------------- | ------------------------------------------ |
+| **[用户指南](docs/USER_GUIDE.md)**      | 完整使用教程，含 RunningHub APP 设置指南   |
+| **[部署指南](docs/SETUP_GUIDE.md)**     | OpenCode/Claude Desktop 接入配置           |
+| **[安装问题记录](docs/INSTALLATION_ISSUES.md)** | 常见问题及解决方案                |
+| **[共享测试 APP](#共享测试-app)**       | 免费测试 APP ID，快速体验                  |
 
 ---
 
@@ -161,14 +162,30 @@ node test-api.mjs
 
 ## 配置 OpenCode
 
-编辑 OpenCode 配置文件（`~/.config/opencode/mcp_config.json`）：
+### 方式一：全局安装（推荐）
+
+```bash
+# 1. 克隆并构建
+git clone https://github.com/AIRix315/RHMCP.git
+cd RHMCP
+npm install
+npm run build
+
+# 2. 全局链接（需要管理员权限）
+npm link
+
+# 3. 验证安装
+runninghub-mcp --help
+```
+
+编辑 OpenCode 配置文件（`~/.config/opencode/opencode.json`）：
 
 ```json
 {
-  "mcpServers": {
+  "mcp": {
     "runninghub": {
-      "command": "node",
-      "args": ["/完整路径/RHMCP/dist/server/index.js"],
+      "type": "local",
+      "command": ["runninghub-mcp", "--stdio"],
       "env": {
         "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
       }
@@ -176,6 +193,71 @@ node test-api.mjs
   }
 }
 ```
+
+### 方式二：直接运行
+
+```json
+{
+  "mcp": {
+    "runninghub": {
+      "command": "node",
+      "args": ["/完整路径/RHMCP/dist/server/index.js", "--stdio"],
+      "env": {
+        "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
+      }
+    }
+  }
+}
+```
+
+### HTTP 模式（可选）
+
+如果需要 HTTP API 访问：
+
+```json
+{
+  "mcp": {
+    "runninghub": {
+      "type": "http",
+      "url": "http://localhost:3000/mcp"
+    }
+  }
+}
+```
+
+然后运行：`runninghub-mcp --http`
+
+---
+
+## 运行模式
+
+RHMCP 支持两种运行模式：
+
+### STDIO 模式（默认推荐）
+
+用于 MCP 客户端集成（OpenCode、Claude Desktop 等）：
+
+```bash
+runninghub-mcp --stdio
+# 或
+MCP_TRANSPORT=stdio runninghub-mcp
+```
+
+### HTTP 模式
+
+用于 HTTP API 访问和云部署：
+
+```bash
+runninghub-mcp --http
+# 或
+runninghub-mcp  # 默认 HTTP 模式
+# 或
+PORT=8080 runninghub-mcp --http
+```
+
+访问：
+- MCP 端点: `http://localhost:3000/mcp`
+- 健康检查: `http://localhost:3000/health`
 
 ---
 
@@ -187,6 +269,12 @@ npm install
 
 # 构建
 npm run build
+
+# 开发模式（HTTP）
+npm run dev
+
+# 开发模式（STDIO）
+npm run dev:stdio
 
 # 运行测试
 node test-api.mjs
