@@ -1,176 +1,174 @@
 # RunningHub MCP Service
 
 [![CI](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml)
-[![Release](https://github.com/AIRix315/RHMCP/actions/workflows/release.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-一个 MCP (Model Context Protocol) 服务，让 AI Agent 能够轻松调用 RunningHub 平台的生图、生视频、改图、生成音乐等功能。
+🚀 **一站式 RunningHub AI 平台 MCP 服务** - 让 AI Agent 轻松调用生图、生成视频、音频处理等功能。
+
+## 快速链接
+
+| 文档                                | 说明                                     |
+| ----------------------------------- | ---------------------------------------- |
+| **[用户指南](docs/USER_GUIDE.md)**  | 完整使用教程，含 RunningHub APP 设置指南 |
+| **[部署指南](docs/SETUP_GUIDE.md)** | OpenCode/Claude Desktop 接入配置         |
+| **[共享测试 APP](#共享测试-app)**   | 免费测试 APP ID，快速体验                |
 
 ## 特性
 
-- 🚀 **8 个 MCP 工具** - 完整的 CRUD 操作
-- 📦 **6 个 MCP 资源** - 配置和状态查询
-- 🔄 **自动/手动双模式** - 模型规则管理
-- ⚡ **分层重试策略** - 全局 + APP级配置
-- ✅ **参数约束验证** - 服务级 + 模型级 + APP级
+- 🛠️ **8 个 MCP 工具** - 上传、执行、查询、APP 管理等
+- 📦 **6 个 MCP 资源** - APP 配置、任务状态、规则查询
+- 🔄 **自动重试策略** - 可配置重试次数和超时
+- ✅ **参数验证** - 服务级 + 模型级 + APP级三层约束
 
-## 快速开始
+## 一分钟开始
 
-### 方式一：从 GitHub 部署
+### 方式一：使用共享测试 APP（推荐）
+
+**无需注册 RunningHub 账号，直接使用共享 APP ID 测试！**
 
 ```bash
-# 1. 克隆仓库
+# 1. 克隆项目
 git clone https://github.com/AIRix315/RHMCP.git
 cd RHMCP
-
-# 2. 安装依赖
 npm install
-
-# 3. 构建项目
 npm run build
 
-# 4. 配置
-cp config/runninghub-mcp-config.example.json runninghub-mcp-config.json
-# 编辑 runninghub-mcp-config.json，填入你的 RunningHub API Key 和 APP ID
-
-# 5. 运行
-npm start
-```
-
-### 方式二：一键部署脚本
-
-**Linux/macOS:**
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.sh | bash
-```
-
-**Windows:**
-
-```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.bat" -OutFile "setup.bat"
-.\setup.bat
-```
-
-### 配置说明
-
-编辑 `runninghub-mcp-config.json`：
-
-```json
+# 2. 创建配置文件（使用共享 APP ID）
+cat > runninghub-mcp-config.json << 'EOF'
 {
-  "apiKey": "YOUR_RUNNINGHUB_API_KEY",
+  "apiKey": "获取你的API Key",
   "baseUrl": "www.runninghub.ai",
   "maxConcurrent": 1,
-  "storage": {
-    "type": "local",
-    "path": "./output"
-  },
+  "storage": { "type": "local", "path": "./output" },
   "apps": {
-    "my-app": {
-      "appId": "YOUR_APP_ID",
-      "alias": "my-app",
+    "test-image": {
+      "appId": "2037760725296357377",
+      "alias": "test-image",
       "category": "image",
-      "description": "My APP description",
-      "inputs": {}
+      "description": "共享测试APP - 图片生成"
     }
   },
-  "modelRules": {
-    "source": "github",
-    "repo": "runninghub-model-rules",
-    "branch": "main",
-    "rules": {},
-    "defaultLanguage": "zh"
-  },
-  "retry": {
-    "maxRetries": 3,
-    "maxWaitTime": 600,
-    "interval": 5
-  },
-  "logging": {
-    "level": "info"
-  }
+  "modelRules": { "rules": {}, "defaultLanguage": "zh" },
+  "retry": { "maxRetries": 3, "maxWaitTime": 600, "interval": 5 },
+  "logging": { "level": "info" }
 }
+EOF
+
+# 3. 运行测试
+node test-api.mjs
 ```
 
-## 工具列表
+### 获取 API Key
 
-| 工具              | 描述          |
-| ----------------- | ------------- |
-| `rh_upload_media` | 上传媒体文件  |
-| `rh_get_app_info` | 获取 APP 配置 |
-| `rh_execute_app`  | 执行 APP      |
-| `rh_query_task`   | 查询任务状态  |
-| `rh_add_app`      | 注册 APP      |
-| `rh_remove_app`   | 删除 APP      |
-| `rh_update_rules` | 更新模型规则  |
-| `rh_list_rules`   | 列出规则      |
+1. 访问 [RunningHub](https://www.runninghub.ai) 注册账号
+2. 进入「个人中心」→「API 密钥」
+3. 创建并复制 API Key
 
-## 资源列表
+### 共享测试 APP
 
-| 资源                  | 描述         |
-| --------------------- | ------------ |
-| `rh://apps`           | APP 列表     |
-| `rh://apps/{alias}`   | APP 详情     |
-| `rh://tasks/{taskId}` | 任务状态     |
-| `rh://tasks/history`  | 任务历史     |
-| `rh://rules`          | 模型规则列表 |
-| `rh://config`         | 当前配置     |
+| APP ID                | 类型     | 说明                           |
+| --------------------- | -------- | ------------------------------ |
+| `2037760725296357377` | 图片生成 | 由 AIRix315 提供的共享测试 APP |
 
-## 配置 MCP 客户端
+## 配置 OpenCode
 
-### OpenCode / Claude Desktop 配置
-
-编辑 MCP 配置文件：
-
-- **Linux/macOS**: `~/.config/opencode/mcp_config.json`
-- **Windows**: `%APPDATA%/opencode/mcp_config.json`
-- **Claude Desktop (macOS)**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Claude Desktop (Windows)**: `%APPDATA%/Claude/claude_desktop_config.json`
+编辑 OpenCode 配置文件（`~/.config/opencode/mcp_config.json`）：
 
 ```json
 {
   "mcpServers": {
     "runninghub": {
       "command": "node",
-      "args": ["/path/to/RHMCP/dist/server/index.js"],
+      "args": ["/完整路径/RHMCP/dist/server/index.js"],
       "env": {
-        "CONFIG_PATH": "/path/to/RHMCP/runninghub-mcp-config.json"
+        "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
       }
     }
   }
 }
 ```
 
-### 使用环境变量配置 API Key
+重启 OpenCode 后即可使用 RunningHub 工具。
 
-```json
-{
-  "mcpServers": {
-    "runninghub": {
-      "command": "node",
-      "args": ["/path/to/RHMCP/dist/server/index.js"],
-      "env": {
-        "RUNNINGHUB_API_KEY": "your-api-key-here"
-      }
-    }
-  }
-}
+## 文件结构
+
+```
+RHMCP/
+├── docs/                    # 文档目录
+│   ├── USER_GUIDE.md       # 用户使用指南
+│   └── SETUP_GUIDE.md      # 部署指南
+├── output/                  # 输出目录（自动创建）
+│   ├── images/              # 生成的图片
+│   ├── videos/              # 生成的视频
+│   └── model-rules-cache/   # 模型规则缓存
+├── config/                  # 配置模板
+│   └── runninghub-mcp-config.example.json
+├── src/                      # 源代码
+├── test-api.mjs             # API 测试脚本
+└── runninghub-mcp-config.json  # 用户配置（需创建）
 ```
 
-## API 端点
+## 可用工具
 
-| 端点      | 方法 | 描述         |
-| --------- | ---- | ------------ |
-| `/mcp`    | POST | MCP 协议端点 |
-| `/health` | GET  | 健康检查     |
+| 工具              | 用途                            |
+| ----------------- | ------------------------------- |
+| `rh_upload_media` | 上传图片/视频/音频到 RunningHub |
+| `rh_get_app_info` | 获取 APP 配置和参数说明         |
+| `rh_execute_app`  | 执行 APP 生成内容               |
+| `rh_query_task`   | 查询任务状态和结果              |
+| `rh_add_app`      | 添加新 APP 到配置               |
+| `rh_remove_app`   | 移除 APP                        |
+| `rh_update_rules` | 更新模型规则                    |
+| `rh_list_rules`   | 列出可用规则                    |
 
-## 环境变量
+## 使用示例
 
-| 变量                 | 描述                    | 默认值                       |
-| -------------------- | ----------------------- | ---------------------------- |
-| `PORT`               | 服务端口                | `3000`                       |
-| `CONFIG_PATH`        | 配置文件路径            | `runninghub-mcp-config.json` |
-| `RUNNINGHUB_API_KEY` | API Key（覆盖配置文件） | -                            |
+### 在 OpenCode 中使用
+
+```
+用户: 请用 RunningHub 生成一张图片，描述是 "一只在星空下的猫咪"
+
+Agent 将自动调用 rh_execute_app 工具：
+1. 查找配置中的 image 类型 APP
+2. 构建请求参数
+3. 提交任务
+4. 等待结果并返回图片 URL
+```
+
+### API 测试
+
+```bash
+# 测试实际 API 调用
+node test-api.mjs
+
+# 使用环境变量
+RUNNINGHUB_API_KEY=your_key node test-api.mjs
+```
+
+## 输出存储
+
+所有生成的内容默认保存在 `./output/` 目录：
+
+```bash
+output/
+├── images/           # 生成的图片
+├── videos/           # 生成的视频
+├── audio/            # 生成的音频
+└── history.json      # 执行历史记录
+```
+
+配置云存储请参考 [docs/USER_GUIDE.md](docs/USER_GUIDE.md)。
+
+## 创建自己的 APP
+
+详细步骤见 [docs/USER_GUIDE.md](docs/USER_GUIDE.md) 的「RunningHub APP 设置指南」章节。
+
+简要流程：
+
+1. 登录 [RunningHub](https://www.runninghub.ai)
+2. 创建或导入 ComfyUI 工作流
+3. 发布并获取 APP ID
+4. 在配置文件中添加 APP ID
 
 ## 开发
 
@@ -178,68 +176,34 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/sc
 # 安装依赖
 npm install
 
-# 开发模式（热重载）
+# 构建
+npm run build
+
+# 开发模式
 npm run dev
 
 # 类型检查
 npx tsc --noEmit
 
-# 构建
-npm run build
+# 格式检查
+npx prettier --check "src/**/*.ts"
 
-# 运行
-npm start
-```
-
-## 分层约束体系
-
-参数验证合并三层约束：
-
-1. **服务级** - 硬性规定（如文件大小 ≤ 30MB）
-2. **模型级** - GitHub 规则库（如 FLUX 仅支持英文）
-3. **APP级** - 用户自定义
-
-## 模型规则贡献
-
-欢迎贡献模型规则到 GitHub 仓库。
-
-规则文件格式：
-
-```json
-{
-  "name": "Qwen Image",
-  "category": "image",
-  "description": "Qwen image generation model",
-  "constraints": {
-    "width": { "min": 256, "max": 2048 },
-    "height": { "min": 256, "max": 2048 },
-    "prompt": {
-      "languages": ["zh", "en"],
-      "maxLength": 1000
-    }
-  }
-}
+# 运行测试
+node test-api.mjs
 ```
 
 ## 故障排除
 
-### 常见问题
-
-1. **配置文件未找到**
-   - 确保 `runninghub-mcp-config.json` 在项目根目录
-   - 或设置 `CONFIG_PATH` 环境变量
-
-2. **API Key 无效**
-   - 检查 API Key 是否正确配置
-   - 确认 RunningHub 账户状态正常
-
-3. **端口被占用**
-   - 设置环境变量 `PORT=3001` 使用其他端口
-
-4. **MCP 连接失败**
-   - 检查 MCP 配置中的路径是否正确
-   - 确保已运行 `npm run build` 构建项目
+详见 [docs/USER_GUIDE.md](docs/USER_GUIDE.md) 的「故障排除」章节。
 
 ## 许可证
 
-MIT
+MIT License
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+**注意**: 使用前请确保配置正确的 API Key。共享 APP ID 仅用于测试，生产环境请使用自己的 APP。

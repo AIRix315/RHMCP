@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Output files (generated content)
+output/
+
 # Logs
 *.log
 
@@ -29,3 +32,13 @@ Thumbs.db
 tmp/
 temp/
 *.tmp
+
+# Cache
+cache/
+*.cache
+
+# Sisyphus local development tools
+.sisyphus/
+
+# Model rules cache (downloaded at runtime)
+model-rules-cache/
