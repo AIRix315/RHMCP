@@ -16,7 +16,7 @@ export interface RunningHubConfig {
 }
 
 export interface StorageConfig {
-  type: 'local' | 'baidu' | 'google';
+  type: "local" | "baidu" | "google";
   path: string;
   cloudConfig?: CloudStorageConfig;
 }
@@ -32,7 +32,7 @@ export interface AppConfig {
   appId: string;
   alias: string;
   modelFamily?: string;
-  category: 'image' | 'audio' | 'video';
+  category: "image" | "audio" | "video";
   description?: string;
   inputs: Record<string, InputParam>;
   outputs?: string[];
@@ -42,7 +42,15 @@ export interface AppConfig {
 export interface InputParam {
   nodeId: string;
   fieldName: string;
-  type: 'STRING' | 'INT' | 'FLOAT' | 'IMAGE' | 'AUDIO' | 'VIDEO' | 'LIST' | 'SWITCH';
+  type:
+    | "STRING"
+    | "INT"
+    | "FLOAT"
+    | "IMAGE"
+    | "AUDIO"
+    | "VIDEO"
+    | "LIST"
+    | "SWITCH";
   required: boolean;
   description?: string;
   default?: string | number;
@@ -53,7 +61,7 @@ export interface Constraint {
   min?: number;
   max?: number;
   step?: number;
-  format?: 'natural' | 'tags' | 'hybrid' | 'structured';
+  format?: "natural" | "tags" | "hybrid" | "structured";
   languages?: string[];
   maxLength?: number;
 }
@@ -66,14 +74,14 @@ export interface RetryConfig {
 }
 
 export interface LogConfig {
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   file?: string;
   maxSize?: number;
   maxFiles?: number;
 }
 
 export interface ModelRulesConfig {
-  source?: 'github' | 'local';
+  source?: "github" | "local";
   repo?: string;
   branch?: string;
   rules: Record<string, ModelRule>;
@@ -96,7 +104,7 @@ export interface NodeInfo {
 
 export interface TaskResult {
   taskId: string;
-  status: 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+  status: "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
   fileUrl?: string;
   fileType?: string;
   error?: string;
@@ -123,7 +131,7 @@ export interface TaskSubmitResponse {
 
 export interface TaskStatusResponse {
   taskId: string;
-  status: 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+  status: "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
   progress?: number;
   message?: string;
   result?: TaskResult;
@@ -136,13 +144,13 @@ export interface TaskStatusResponse {
 export interface ModelRule {
   name: string;
   description: string;
-  category: 'image' | 'audio' | 'video';
+  category: "image" | "audio" | "video";
   constraints: Record<string, Constraint>;
   promptSpec?: PromptSpec;
 }
 
 export interface PromptSpec {
-  format: 'natural' | 'tags' | 'hybrid' | 'structured';
+  format: "natural" | "tags" | "hybrid" | "structured";
   languages: string[];
   preferredLanguage: string;
   maxLength?: number;
@@ -156,17 +164,25 @@ export interface PromptSpec {
 // Utility Types
 // ============================================
 
-export type Category = 'image' | 'audio' | 'video';
+export type Category = "image" | "audio" | "video";
 
-export type FieldType = 'STRING' | 'INT' | 'FLOAT' | 'IMAGE' | 'AUDIO' | 'VIDEO' | 'LIST' | 'SWITCH';
+export type FieldType =
+  | "STRING"
+  | "INT"
+  | "FLOAT"
+  | "IMAGE"
+  | "AUDIO"
+  | "VIDEO"
+  | "LIST"
+  | "SWITCH";
 
-export type TaskStatus = 'PENDING' | 'RUNNING' | 'SUCCESS' | 'FAILED';
+export type TaskStatus = "PENDING" | "RUNNING" | "SUCCESS" | "FAILED";
 
-export type StorageType = 'local' | 'baidu' | 'google';
+export type StorageType = "local" | "baidu" | "google";
 
-export type PromptFormat = 'natural' | 'tags' | 'hybrid' | 'structured';
+export type PromptFormat = "natural" | "tags" | "hybrid" | "structured";
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevel = "debug" | "info" | "warn" | "error";
 
 // ============================================
 // Internal Types

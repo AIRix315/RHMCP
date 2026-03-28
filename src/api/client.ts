@@ -1,4 +1,10 @@
-import { NodeInfo, ApiResponse, TaskResult, RunningHubConfig, AppInfoResponse } from '../types.js';
+import {
+  NodeInfo,
+  ApiResponse,
+  TaskResult,
+  RunningHubConfig,
+  AppInfoResponse,
+} from "../types.js";
 
 export class RunningHubClient {
   private apiKey: string;
@@ -24,35 +30,47 @@ export class RunningHubClient {
   /**
    * 上传文件
    */
-  async uploadFile(file: Uint8Array, fileType: string): Promise<ApiResponse<{ fileName: string }>> {
+  async uploadFile(
+    file: Uint8Array,
+    fileType: string,
+  ): Promise<ApiResponse<{ fileName: string }>> {
     const formData = new FormData();
-    formData.append('apiKey', this.apiKey);
-    formData.append('fileType', fileType);
-    formData.append('file', new Blob([file.buffer as ArrayBuffer]), 'upload');
+    formData.append("apiKey", this.apiKey);
+    formData.append("fileType", fileType);
+    formData.append("file", new Blob([file.buffer as ArrayBuffer]), "upload");
 
-    const response = await fetch(`https://${this.baseUrl}/task/openapi/upload`, {
-      method: 'POST',
-      body: formData
-    });
+    const response = await fetch(
+      `https://${this.baseUrl}/task/openapi/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
     return response.json();
   }
 
   /**
    * 提交任务
    */
-  async submitTask(webappId: string, nodeInfoList: NodeInfo[]): Promise<ApiResponse<{ taskId: string }>> {
+  async submitTask(
+    webappId: string,
+    nodeInfoList: NodeInfo[],
+  ): Promise<ApiResponse<{ taskId: string }>> {
     await this.acquireSlot();
-    
+
     try {
-      const response = await fetch(`https://${this.baseUrl}/task/openapi/ai-app/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          webappId,
-          apiKey: this.apiKey,
-          nodeInfoList
-        })
-      });
+      const response = await fetch(
+        `https://${this.baseUrl}/task/openapi/ai-app/run`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            webappId,
+            apiKey: this.apiKey,
+            nodeInfoList,
+          }),
+        },
+      );
       return response.json();
     } finally {
       this.releaseSlot();
@@ -63,20 +81,23 @@ export class RunningHubClient {
    * 查询任务
    */
   async queryTask(taskId: string): Promise<ApiResponse<TaskResult[]>> {
-    const response = await fetch(`https://${this.baseUrl}/task/openapi/outputs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        apiKey: this.apiKey,
-        taskId
-      })
-    });
+    const response = await fetch(
+      `https://${this.baseUrl}/task/openapi/outputs`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          apiKey: this.apiKey,
+          taskId,
+        }),
+      },
+    );
     return response.json();
   }
 
   private async acquireSlot(): Promise<void> {
     while (this.activeRequests >= this.maxConcurrent) {
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
     }
     this.activeRequests++;
   }

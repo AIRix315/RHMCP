@@ -40,11 +40,13 @@ npm start
 ### 方式二：一键部署脚本
 
 **Linux/macOS:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.sh | bash
 ```
 
 **Windows:**
+
 ```powershell
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.bat" -OutFile "setup.bat"
 .\setup.bat
@@ -92,33 +94,34 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/sc
 
 ## 工具列表
 
-| 工具 | 描述 |
-|------|------|
-| `rh_upload_media` | 上传媒体文件 |
+| 工具              | 描述          |
+| ----------------- | ------------- |
+| `rh_upload_media` | 上传媒体文件  |
 | `rh_get_app_info` | 获取 APP 配置 |
-| `rh_execute_app` | 执行 APP |
-| `rh_query_task` | 查询任务状态 |
-| `rh_add_app` | 注册 APP |
-| `rh_remove_app` | 删除 APP |
-| `rh_update_rules` | 更新模型规则 |
-| `rh_list_rules` | 列出规则 |
+| `rh_execute_app`  | 执行 APP      |
+| `rh_query_task`   | 查询任务状态  |
+| `rh_add_app`      | 注册 APP      |
+| `rh_remove_app`   | 删除 APP      |
+| `rh_update_rules` | 更新模型规则  |
+| `rh_list_rules`   | 列出规则      |
 
 ## 资源列表
 
-| 资源 | 描述 |
-|------|------|
-| `rh://apps` | APP 列表 |
-| `rh://apps/{alias}` | APP 详情 |
-| `rh://tasks/{taskId}` | 任务状态 |
-| `rh://tasks/history` | 任务历史 |
-| `rh://rules` | 模型规则列表 |
-| `rh://config` | 当前配置 |
+| 资源                  | 描述         |
+| --------------------- | ------------ |
+| `rh://apps`           | APP 列表     |
+| `rh://apps/{alias}`   | APP 详情     |
+| `rh://tasks/{taskId}` | 任务状态     |
+| `rh://tasks/history`  | 任务历史     |
+| `rh://rules`          | 模型规则列表 |
+| `rh://config`         | 当前配置     |
 
 ## 配置 MCP 客户端
 
 ### OpenCode / Claude Desktop 配置
 
 编辑 MCP 配置文件：
+
 - **Linux/macOS**: `~/.config/opencode/mcp_config.json`
 - **Windows**: `%APPDATA%/opencode/mcp_config.json`
 - **Claude Desktop (macOS)**: `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -156,18 +159,18 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/sc
 
 ## API 端点
 
-| 端点 | 方法 | 描述 |
-|------|------|------|
-| `/mcp` | POST | MCP 协议端点 |
-| `/health` | GET | 健康检查 |
+| 端点      | 方法 | 描述         |
+| --------- | ---- | ------------ |
+| `/mcp`    | POST | MCP 协议端点 |
+| `/health` | GET  | 健康检查     |
 
 ## 环境变量
 
-| 变量 | 描述 | 默认值 |
-|------|------|--------|
-| `PORT` | 服务端口 | `3000` |
-| `CONFIG_PATH` | 配置文件路径 | `runninghub-mcp-config.json` |
-| `RUNNINGHUB_API_KEY` | API Key（覆盖配置文件） | - |
+| 变量                 | 描述                    | 默认值                       |
+| -------------------- | ----------------------- | ---------------------------- |
+| `PORT`               | 服务端口                | `3000`                       |
+| `CONFIG_PATH`        | 配置文件路径            | `runninghub-mcp-config.json` |
+| `RUNNINGHUB_API_KEY` | API Key（覆盖配置文件） | -                            |
 
 ## 开发
 

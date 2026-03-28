@@ -1,31 +1,28 @@
-import { z } from 'zod';
-import { readFileSync, writeFileSync } from 'fs';
+import { z } from "zod";
+import { readFileSync, writeFileSync } from "fs";
 
 const RemoveAppSchema = z.object({
-  appId: z.string().optional().describe('APP ID'),
-  alias: z.string().optional().describe('APP别名'),
+  appId: z.string().optional().describe("APP ID"),
+  alias: z.string().optional().describe("APP别名"),
 });
 
 export const removeAppTool = {
-  name: 'rh_remove_app',
-  description: '删除APP配置',
+  name: "rh_remove_app",
+  description: "删除APP配置",
   inputSchema: RemoveAppSchema,
-  
-  async handler(
-    args: z.infer<typeof RemoveAppSchema>,
-    configPath: string
-  ) {
+
+  async handler(args: z.infer<typeof RemoveAppSchema>, configPath: string) {
     // 1. 读取配置
-    const configContent = readFileSync(configPath, 'utf-8');
+    const configContent = readFileSync(configPath, "utf-8");
     const config = JSON.parse(configContent);
-    
+
     if (!config.apps) {
-      throw new Error('配置文件中没有apps部分');
+      throw new Error("配置文件中没有apps部分");
     }
-    
+
     // 2. 查找要删除的APP
     let keyToDelete: string | null = null;
-    
+
     if (args.alias) {
       // 通过别名删除
       if (config.apps[args.alias]) {
@@ -45,20 +42,20 @@ export const removeAppTool = {
         throw new Error(`APP ID "${args.appId}" 不存在`);
       }
     } else {
-      throw new Error('需要提供 appId 或 alias');
+      throw new Error("需要提供 appId 或 alias");
     }
-    
+
     // 3. 删除APP
     const deletedApp = config.apps[keyToDelete];
     delete config.apps[keyToDelete];
-    
+
     // 4. 保存配置
     writeFileSync(configPath, JSON.stringify(config, null, 2));
-    
+
     return {
       success: true,
       deleted: keyToDelete,
       app: deletedApp,
     };
-  }
+  },
 };

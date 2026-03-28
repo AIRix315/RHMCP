@@ -1,1 +1,1 @@
-export { RunningHubClient, createClient } from './client.js';
+export { RunningHubClient, createClient } from "./client.js";

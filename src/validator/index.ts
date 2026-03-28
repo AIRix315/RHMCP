@@ -1,1 +1,6 @@
-export { mergeConstraints, validateParams, ValidationResult, Constraints } from './param-validator.js';
+export {
+  mergeConstraints,
+  validateParams,
+  ValidationResult,
+  Constraints,
+} from "./param-validator.js";
