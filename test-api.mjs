@@ -22,24 +22,38 @@ import { join } from "path";
 // Shared test APP ID
 const TEST_APP_ID = "2037760725296357377";
 
-async function loadConfig() {
+function loadConfig() {
   const configPath = join(process.cwd(), "runninghub-mcp-config.json");
 
   if (existsSync(configPath)) {
     const content = readFileSync(configPath, "utf-8");
     const config = JSON.parse(content);
+    const apiKey = process.env.RUNNINGHUB_API_KEY || config.apiKey;
+    if (!apiKey) {
+      throw new Error("No API key found in config or environment");
+    }
     return {
-      apiKey: process.env.RUNNINGHUB_API_KEY || config.apiKey,
-      baseUrl: config.baseUrl || "www.runninghub.ai",
+      apiKey,
+      baseUrl: config.baseUrl || "www.runninghub.cn",
       maxConcurrent: config.maxConcurrent || 1,
+      storage: config.storage || { type: "local", path: "./output" },
+      apps: config.apps || {},
+      modelRules: config.modelRules || { rules: {}, defaultLanguage: "zh" },
+      retry: config.retry || { maxRetries: 3, maxWaitTime: 600, interval: 5 },
+      logging: config.logging || { level: "info" },
     };
   }
 
   if (process.env.RUNNINGHUB_API_KEY) {
     return {
       apiKey: process.env.RUNNINGHUB_API_KEY,
-      baseUrl: "www.runninghub.ai",
+      baseUrl: "www.runninghub.cn",
       maxConcurrent: 1,
+      storage: { type: "local", path: "./output" },
+      apps: {},
+      modelRules: { rules: {}, defaultLanguage: "zh" },
+      retry: { maxRetries: 3, maxWaitTime: 600, interval: 5 },
+      logging: { level: "info" },
     };
   }
 
@@ -59,9 +73,13 @@ async function main() {
   try {
     config = loadConfig();
     console.log("✓ Configuration loaded");
-    console.log(
-      `  - API Key: ${config.apiKey.substring(0, 4)}***${config.apiKey.slice(-4)}`,
-    );
+    if (config.apiKey) {
+      console.log(
+        `  - API Key: ${config.apiKey.substring(0, 4)}***${config.apiKey.slice(-4)}`,
+      );
+    } else {
+      console.log("  - API Key: NOT SET");
+    }
     console.log(`  - Base URL: ${config.baseUrl}`);
   } catch (error) {
     console.error("✗ Failed to load configuration:", error.message);
@@ -75,30 +93,31 @@ async function main() {
   console.log("Test 1: Get APP Info");
   console.log("-".repeat(40));
 
+  let appInfoResult;
   try {
-    const appInfo = await client.getAppInfo(TEST_APP_ID);
+    appInfoResult = await client.getAppInfo(TEST_APP_ID);
 
-    if (appInfo.code === 0) {
+    if (appInfoResult.code === 0) {
       console.log("✓ APP Info retrieved successfully");
-      console.log(`  - APP Name: ${appInfo.data?.webappName || "N/A"}`);
+      console.log(`  - APP Name: ${appInfoResult.data?.webappName || "N/A"}`);
       console.log(
-        `  - Parameters: ${appInfo.data?.nodeInfoList?.length || 0} nodes`,
+        `  - Parameters: ${appInfoResult.data?.nodeInfoList?.length || 0} nodes`,
       );
 
-      if (appInfo.data?.nodeInfoList) {
+      if (appInfoResult.data?.nodeInfoList) {
         console.log("  - Node Info:");
-        appInfo.data.nodeInfoList.slice(0, 5).forEach((node) => {
+        appInfoResult.data.nodeInfoList.slice(0, 5).forEach((node) => {
           console.log(`    - ${node.fieldName}: ${node.fieldType}`);
         });
-        if (appInfo.data.nodeInfoList.length > 5) {
+        if (appInfoResult.data.nodeInfoList.length > 5) {
           console.log(
-            `    ... and ${appInfo.data.nodeInfoList.length - 5} more`,
+            `    ... and ${appInfoResult.data.nodeInfoList.length - 5} more`,
           );
         }
       }
     } else {
       console.log("✗ Failed to get APP info");
-      console.log(`  - Error: ${appInfo.msg}`);
+      console.log(`  - Error: ${appInfoResult.msg}`);
     }
   } catch (error) {
     console.error("✗ Exception:", error.message);
@@ -115,19 +134,19 @@ async function main() {
   console.log("");
 
   try {
-    const nodeInfoList = appInfo?.data?.nodeInfoList || [];
+    const nodeInfoList = appInfoResult?.data?.nodeInfoList || [];
 
-    // Find the prompt parameter
+    // Find the prompt parameter (first STRING type node)
     const promptNode = nodeInfoList.find(
-      (n) =>
-        n.fieldName.toLowerCase().includes("prompt") ||
-        n.nodeId.includes("prompt"),
+      (n) => n.fieldType === "STRING" || n.fieldName === "text",
     );
 
     if (!promptNode) {
       console.log("⚠ No prompt parameter found in APP config");
+      console.log("  Available nodes:", nodeInfoList.map(n => `${n.fieldName}(${n.fieldType})`).join(", "));
       console.log("  Skipping execute test");
     } else {
+      console.log(`  Found prompt node: ${promptNode.fieldName} (${promptNode.fieldType})`);
       console.log(
         '  Submitting task with prompt: "A beautiful sunset over mountains"',
       );
@@ -135,7 +154,9 @@ async function main() {
       const result = await client.submitTask(TEST_APP_ID, [
         {
           nodeId: promptNode.nodeId,
+          nodeName: promptNode.nodeName,
           fieldName: promptNode.fieldName,
+          fieldType: promptNode.fieldType,
           fieldValue: "A beautiful sunset over mountains, photorealistic, 4k",
         },
       ]);
