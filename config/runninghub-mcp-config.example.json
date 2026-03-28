@@ -1,0 +1,23 @@
+{
+  "apiKey": "YOUR_API_KEY_HERE",
+  "baseUrl": "www.runninghub.ai",
+  "maxConcurrent": 1,
+  "storage": {
+    "type": "local",
+    "path": "./output"
+  },
+  "apps": {},
+  "modelRules": {
+    "source": "github",
+    "repo": "your-username/runninghub-model-rules",
+    "branch": "main"
+  },
+  "retry": {
+    "maxRetries": 3,
+    "maxWaitTime": 600,
+    "interval": 5
+  },
+  "logging": {
+    "level": "info"
+  }
+}
