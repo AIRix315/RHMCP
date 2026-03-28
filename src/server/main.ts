@@ -46,7 +46,9 @@ function showHelp(): void {
   console.log('    "runninghub": {');
   console.log('      "command": "runninghub-mcp",');
   console.log('      "args": ["--stdio"],');
-  console.log('      "env": { "CONFIG_PATH": "/path/to/runninghub-mcp-config.json" }');
+  console.log(
+    '      "env": { "CONFIG_PATH": "/path/to/runninghub-mcp-config.json" }',
+  );
   console.log("    }");
   console.log("  }");
   console.log("");
