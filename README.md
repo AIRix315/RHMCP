@@ -1,8 +1,7 @@
 # RunningHub MCP Service
 
-[![CI](https://github.com/your-username/runninghub-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/runninghub-mcp/actions/workflows/ci.yml)
-[![Release](https://github.com/your-username/runninghub-mcp/actions/workflows/release.yml/badge.svg)](https://github.com/your-username/runninghub-mcp/actions/workflows/release.yml)
-[![npm version](https://img.shields.io/npm/v/runninghub-mcp.svg)](https://www.npmjs.com/package/runninghub-mcp)
+[![CI](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/ci.yml)
+[![Release](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/release.yml/badge.svg)](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 一个 MCP (Model Context Protocol) 服务，让 AI Agent 能够轻松调用 RunningHub 平台的生图、生视频、改图、生成音乐等功能。
@@ -21,8 +20,8 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-username/runninghub-mcp.git
-cd runninghub-mcp
+git clone https://github.com/YOUR_USERNAME/RHMCP.git
+cd RHMCP
 
 # 2. 安装依赖
 npm install
@@ -32,7 +31,7 @@ npm run build
 
 # 4. 配置
 cp config/runninghub-mcp-config.example.json runninghub-mcp-config.json
-# 编辑 runninghub-mcp-config.json，填入你的 API Key 和 APP ID
+# 编辑 runninghub-mcp-config.json，填入你的 RunningHub API Key 和 APP ID
 
 # 5. 运行
 npm start
@@ -42,12 +41,53 @@ npm start
 
 **Linux/macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-username/runninghub-mcp/main/scripts/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/RHMCP/main/scripts/setup.sh | bash
 ```
 
 **Windows:**
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/your-username/runninghub-mcp/main/scripts/setup.bat" -OutFile "setup.bat" && .\setup.bat
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/YOUR_USERNAME/RHMCP/main/scripts/setup.bat" -OutFile "setup.bat"
+.\setup.bat
+```
+
+### 配置说明
+
+编辑 `runninghub-mcp-config.json`：
+
+```json
+{
+  "apiKey": "YOUR_RUNNINGHUB_API_KEY",
+  "baseUrl": "www.runninghub.ai",
+  "maxConcurrent": 1,
+  "storage": {
+    "type": "local",
+    "path": "./output"
+  },
+  "apps": {
+    "my-app": {
+      "appId": "YOUR_APP_ID",
+      "alias": "my-app",
+      "category": "image",
+      "description": "My APP description",
+      "inputs": {}
+    }
+  },
+  "modelRules": {
+    "source": "github",
+    "repo": "runninghub-model-rules",
+    "branch": "main",
+    "rules": {},
+    "defaultLanguage": "zh"
+  },
+  "retry": {
+    "maxRetries": 3,
+    "maxWaitTime": 600,
+    "interval": 5
+  },
+  "logging": {
+    "level": "info"
+  }
+}
 ```
 
 ## 工具列表
@@ -74,66 +114,40 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/your-username/runningh
 | `rh://rules` | 模型规则列表 |
 | `rh://config` | 当前配置 |
 
-## 分层约束体系
+## 配置 MCP 客户端
 
-参数验证合并三层约束：
+### OpenCode / Claude Desktop 配置
 
-1. **服务级** - 硬性规定（如文件大小 ≤ 30MB）
-2. **模型级** - GitHub 规则库（如 FLUX 仅支持英文）
-3. **APP级** - 用户自定义
-
-## 模型规则贡献
-
-欢迎贡献模型规则到 [runninghub-model-rules](https://github.com/runninghub-model-rules) 仓库。
-
-规则文件格式：
-
-```json
-{
-  "name": "Qwen Image",
-  "constraints": {
-    "width": { "min": 256, "max": 2048 },
-    "prompt": {
-      "languages": ["zh", "en"]
-    }
-  }
-}
-```
-
-## 配置 MCP 客户端（如 OpenCode/Claude Desktop）
-
-### OpenCode 配置
-
-编辑 OpenCode 配置文件（通常位于 `~/.config/opencode/mcp_config.json` 或 `%APPDATA%/opencode/mcp_config.json`）：
+编辑 MCP 配置文件：
+- **Linux/macOS**: `~/.config/opencode/mcp_config.json`
+- **Windows**: `%APPDATA%/opencode/mcp_config.json`
+- **Claude Desktop (macOS)**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Claude Desktop (Windows)**: `%APPDATA%/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "runninghub": {
       "command": "node",
-      "args": ["/path/to/runninghub-mcp/dist/server/index.js"],
+      "args": ["/path/to/RHMCP/dist/server/index.js"],
       "env": {
-        "CONFIG_PATH": "/path/to/runninghub-mcp-config.json"
+        "CONFIG_PATH": "/path/to/RHMCP/runninghub-mcp-config.json"
       }
     }
   }
 }
 ```
 
-### Claude Desktop 配置
-
-编辑 Claude Desktop 配置文件：
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+### 使用环境变量配置 API Key
 
 ```json
 {
   "mcpServers": {
     "runninghub": {
       "command": "node",
-      "args": ["C:/path/to/runninghub-mcp/dist/server/index.js"],
+      "args": ["/path/to/RHMCP/dist/server/index.js"],
       "env": {
-        "CONFIG_PATH": "C:/path/to/runninghub-mcp-config.json"
+        "RUNNINGHUB_API_KEY": "your-api-key-here"
       }
     }
   }
@@ -158,6 +172,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/your-username/runningh
 ## 开发
 
 ```bash
+# 安装依赖
+npm install
+
 # 开发模式（热重载）
 npm run dev
 
@@ -166,6 +183,39 @@ npx tsc --noEmit
 
 # 构建
 npm run build
+
+# 运行
+npm start
+```
+
+## 分层约束体系
+
+参数验证合并三层约束：
+
+1. **服务级** - 硬性规定（如文件大小 ≤ 30MB）
+2. **模型级** - GitHub 规则库（如 FLUX 仅支持英文）
+3. **APP级** - 用户自定义
+
+## 模型规则贡献
+
+欢迎贡献模型规则到 GitHub 仓库。
+
+规则文件格式：
+
+```json
+{
+  "name": "Qwen Image",
+  "category": "image",
+  "description": "Qwen image generation model",
+  "constraints": {
+    "width": { "min": 256, "max": 2048 },
+    "height": { "min": 256, "max": 2048 },
+    "prompt": {
+      "languages": ["zh", "en"],
+      "maxLength": 1000
+    }
+  }
+}
 ```
 
 ## 故障排除
@@ -173,7 +223,8 @@ npm run build
 ### 常见问题
 
 1. **配置文件未找到**
-   - 确保 `runninghub-mcp-config.json` 在项目根目录或通过 `CONFIG_PATH` 指定
+   - 确保 `runninghub-mcp-config.json` 在项目根目录
+   - 或设置 `CONFIG_PATH` 环境变量
 
 2. **API Key 无效**
    - 检查 API Key 是否正确配置
@@ -181,6 +232,10 @@ npm run build
 
 3. **端口被占用**
    - 设置环境变量 `PORT=3001` 使用其他端口
+
+4. **MCP 连接失败**
+   - 检查 MCP 配置中的路径是否正确
+   - 确保已运行 `npm run build` 构建项目
 
 ## 许可证
 
