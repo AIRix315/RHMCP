@@ -9,7 +9,7 @@ import { loadConfig } from "../config/loader.js";
 import { validateConfig } from "../config/validator.js";
 import { createServer, registerTools, registerResources } from "./register.js";
 
-const CONFIG_PATH = process.env.CONFIG_PATH || "runninghub-mcp-config.json";
+const CONFIG_PATH = process.env.CONFIG_PATH || "rhmcp-config.json";
 
 export async function startStdioServer(): Promise<void> {
   // 1. 加载配置
@@ -50,5 +50,5 @@ export async function startStdioServer(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error("✅ RunningHub MCP Server started (STDIO mode)");
+  console.error("✅ RHMCP started (STDIO mode)");
 }

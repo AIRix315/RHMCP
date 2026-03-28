@@ -336,7 +336,7 @@ export function registerResources(ctx: ServerContext): void {
 export function createServer(): McpServer {
   return new McpServer(
     {
-      name: "runninghub-mcp",
+      name: "rhmcp",
       version: "1.0.0",
     },
     {

@@ -8,14 +8,14 @@
 
 ### 问题描述
 
-执行 `npm link` 后，显示安装成功，但 `runninghub-mcp` 命令提示找不到。
+执行 `npm link` 后，显示安装成功，但 `rhmcp` 命令提示找不到。
 
 ```bash
 $ npm link
 added 1 package in 7s
 
-$ runninghub-mcp
-bash: runninghub-mcp: command not found
+$ rhmcp
+bash: rhmcp: command not found
 ```
 
 ### 根本原因
@@ -28,9 +28,9 @@ bash: runninghub-mcp: command not found
 
 ```json
 {
-  "name": "runninghub-mcp",
+  "name": "rhmcp",
   "bin": {
-    "runninghub-mcp": "./dist/server/index.js"
+    "rhmcp": "./dist/server/index.js"
   }
 }
 ```
@@ -46,11 +46,11 @@ bash: runninghub-mcp: command not found
 
 ```bash
 $ npm link
-$ which runninghub-mcp
-/d/Program Files/nodejs/node_global/runninghub-mcp
+$ which rhmcp
+/d/Program Files/nodejs/node_global/rhmcp
 
-$ runninghub-mcp --help
-RunningHub MCP Server v1.0.0
+$ rhmcp --help
+RHMCP v1.0.0 - RunningHub AI Platform MCP Server
 ...
 ```
 
@@ -123,11 +123,11 @@ await server.connect(transport);
 ```json
 {
   "mcp": {
-    "runninghub": {
+    "rhmcp": {
       "type": "local",
-      "command": ["runninghub-mcp", "--stdio"],
+      "command": ["rhmcp", "--stdio"],
       "env": {
-        "CONFIG_PATH": "/path/to/runninghub-mcp-config.json"
+        "CONFIG_PATH": "/path/to/rhmcp-config.json"
       }
     }
   }
@@ -139,7 +139,7 @@ await server.connect(transport);
 ```json
 {
   "mcp": {
-    "runninghub": {
+    "rhmcp": {
       "type": "http",
       "url": "https://your-server.com/mcp"
     }
@@ -191,13 +191,13 @@ await server.connect(transport);
 
 ```bash
 # 测试初始化
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}' | runninghub-mcp --stdio
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}' | rhmcp --stdio
 
 # 应该返回类似：
-# {"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{"listChanged":true},...},"serverInfo":{"name":"runninghub-mcp","version":"1.0.0"}},"jsonrpc":"2.0","id":1}
+# {"result":{"protocolVersion":"2024-11-05","capabilities":{"tools":{"listChanged":true},...},"serverInfo":{"name":"rhmcp","version":"1.0.0"}},"jsonrpc":"2.0","id":1}
 
 # 测试工具列表
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | runninghub-mcp --stdio
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | rhmcp --stdio
 ```
 
 ---
@@ -210,8 +210,8 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | runninghub-m
 - [ ] 入口文件有 `#!/usr/bin/env node` shebang
 - [ ] 执行 `npm run build` 构建最新代码
 - [ ] 执行 `npm link` 全局链接
-- [ ] 验证命令可用：`runninghub-mcp --help`
-- [ ] 验证 STDIO 模式：`echo '...' | runninghub-mcp --stdio`
+- [ ] 验证命令可用：`rhmcp --help`
+- [ ] 验证 STDIO 模式：`echo '...' | rhmcp --stdio`
 - [ ] 配置文件使用正确的绝对路径
 - [ ] 配置正确的 `CONFIG_PATH` 环境变量
 

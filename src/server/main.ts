@@ -1,5 +1,5 @@
 /**
- * RunningHub MCP Server 主入口
+ * RHMCP 主入口
  * 支持 STDIO 和 HTTP 两种传输模式
  */
 
@@ -27,34 +27,32 @@ export function detectTransportMode(): "stdio" | "http" {
  */
 function showHelp(): void {
   console.log("");
-  console.log("RunningHub MCP Server v1.0.0");
+  console.log("RHMCP v1.0.0 - RunningHub AI Platform MCP Server");
   console.log("");
   console.log("Usage:");
-  console.log("  runninghub-mcp              Start HTTP server (default)");
-  console.log("  runninghub-mcp --stdio     Start STDIO server");
-  console.log("  runninghub-mcp --http      Start HTTP server");
-  console.log("  runninghub-mcp --help      Show this help");
+  console.log("  rhmcp                    Start HTTP server (default)");
+  console.log("  rhmcp --stdio            Start STDIO server");
+  console.log("  rhmcp --http             Start HTTP server");
+  console.log("  rhmcp --help             Show this help");
   console.log("");
   console.log("Environment Variables:");
-  console.log("  MCP_TRANSPORT=stdio       Use STDIO mode");
-  console.log("  MCP_TRANSPORT=http         Use HTTP mode");
-  console.log("  CONFIG_PATH=<path>         Configuration file path");
-  console.log("  PORT=<port>                HTTP server port (default: 3000)");
+  console.log("  MCP_TRANSPORT=stdio      Use STDIO mode");
+  console.log("  MCP_TRANSPORT=http       Use HTTP mode");
+  console.log("  CONFIG_PATH=<path>       Configuration file path");
+  console.log("  PORT=<port>              HTTP server port (default: 3000)");
   console.log("");
   console.log("OpenCode Configuration (STDIO):");
   console.log('  "mcpServers": {');
-  console.log('    "runninghub": {');
-  console.log('      "command": "runninghub-mcp",');
+  console.log('    "rhmcp": {');
+  console.log('      "command": "rhmcp",');
   console.log('      "args": ["--stdio"],');
-  console.log(
-    '      "env": { "CONFIG_PATH": "/path/to/runninghub-mcp-config.json" }',
-  );
+  console.log('      "env": { "CONFIG_PATH": "/path/to/rhmcp-config.json" }');
   console.log("    }");
   console.log("  }");
   console.log("");
   console.log("OpenCode Configuration (HTTP):");
   console.log('  "mcpServers": {');
-  console.log('    "runninghub": {');
+  console.log('    "rhmcp": {');
   console.log('      "type": "http",');
   console.log('      "url": "http://localhost:3000/mcp"');
   console.log("    }");

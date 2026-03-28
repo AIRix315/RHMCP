@@ -10,7 +10,7 @@ import { loadConfig } from "../config/loader.js";
 import { validateConfig } from "../config/validator.js";
 import { createServer, registerTools, registerResources } from "./register.js";
 
-const CONFIG_PATH = process.env.CONFIG_PATH || "runninghub-mcp-config.json";
+const CONFIG_PATH = process.env.CONFIG_PATH || "rhmcp-config.json";
 
 export async function startHttpServer(port?: number): Promise<void> {
   // 1. 加载配置
@@ -97,7 +97,7 @@ export async function startHttpServer(port?: number): Promise<void> {
   const serverPort = port || parseInt(process.env.PORT || "3000", 10);
   app.listen(serverPort, () => {
     console.log("");
-    console.log("✅ RunningHub MCP Server started successfully! (HTTP mode)");
+    console.log("✅ RHMCP started successfully! (HTTP mode)");
     console.log(`   MCP endpoint: http://localhost:${serverPort}/mcp`);
     console.log(`   Health check: http://localhost:${serverPort}/health`);
     console.log("");

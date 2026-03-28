@@ -1,11 +1,11 @@
 {
-  "name": "runninghub-mcp",
+  "name": "rhmcp",
   "version": "1.0.0",
-  "description": "RunningHub AI Platform MCP Server",
+  "description": "RHMCP - RunningHub AI Platform MCP Server",
   "type": "module",
   "main": "dist/server/index.js",
   "bin": {
-    "runninghub-mcp": "./dist/server/index.js"
+    "rhmcp": "./dist/server/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
     "dev": "tsx src/server/index.ts",
     "dev:stdio": "tsx src/server/index.ts --stdio"
   },
-  "keywords": ["mcp", "runninghub", "ai"],
+  "keywords": ["mcp", "rhmcp", "runninghub", "ai"],
   "author": "",
   "license": "MIT",
   "dependencies": {

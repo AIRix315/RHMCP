@@ -1,9 +1,9 @@
-# RunningHub MCP Service
+# RHMCP
 
 [![CI](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-🚀 **RunningHub AI 平台 MCP 服务** - 让 AI Agent 轻松调用生图、生成视频、音频处理等功能。
+🚀 **RHMCP** - RunningHub AI Platform MCP Server - 让 AI Agent 轻松调用生图、生成视频、音频处理等功能。
 
 ## 快速链接
 
@@ -54,7 +54,7 @@ npm install
 npm run build
 
 # 2. 创建配置文件
-cat > runninghub-mcp-config.json << 'EOF'
+cat > rhmcp-config.json << 'EOF'
 {
   "apiKey": "YOUR_API_KEY_HERE",
   "baseUrl": "www.runninghub.cn",
@@ -175,7 +175,7 @@ npm run build
 npm link
 
 # 3. 验证安装
-runninghub-mcp --help
+rhmcp --help
 ```
 
 编辑 OpenCode 配置文件（`~/.config/opencode/opencode.json`）：
@@ -183,11 +183,11 @@ runninghub-mcp --help
 ```json
 {
   "mcp": {
-    "runninghub": {
+    "rhmcp": {
       "type": "local",
-      "command": ["runninghub-mcp", "--stdio"],
+      "command": ["rhmcp", "--stdio"],
       "env": {
-        "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
+        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
       }
     }
   }
@@ -199,11 +199,11 @@ runninghub-mcp --help
 ```json
 {
   "mcp": {
-    "runninghub": {
+    "rhmcp": {
       "command": "node",
       "args": ["/完整路径/RHMCP/dist/server/index.js", "--stdio"],
       "env": {
-        "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
+        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
       }
     }
   }
@@ -217,7 +217,7 @@ runninghub-mcp --help
 ```json
 {
   "mcp": {
-    "runninghub": {
+    "rhmcp": {
       "type": "http",
       "url": "http://localhost:3000/mcp"
     }
@@ -225,7 +225,7 @@ runninghub-mcp --help
 }
 ```
 
-然后运行：`runninghub-mcp --http`
+然后运行：`rhmcp --http`
 
 ---
 
@@ -238,9 +238,9 @@ RHMCP 支持两种运行模式：
 用于 MCP 客户端集成（OpenCode、Claude Desktop 等）：
 
 ```bash
-runninghub-mcp --stdio
+rhmcp --stdio
 # 或
-MCP_TRANSPORT=stdio runninghub-mcp
+MCP_TRANSPORT=stdio rhmcp
 ```
 
 ### HTTP 模式
@@ -248,11 +248,11 @@ MCP_TRANSPORT=stdio runninghub-mcp
 用于 HTTP API 访问和云部署：
 
 ```bash
-runninghub-mcp --http
+rhmcp --http
 # 或
-runninghub-mcp  # 默认 HTTP 模式
+rhmcp  # 默认 HTTP 模式
 # 或
-PORT=8080 runninghub-mcp --http
+PORT=8080 rhmcp --http
 ```
 
 访问：
