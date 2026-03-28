@@ -1,7 +1,7 @@
 # RunningHub MCP Service
 
-[![CI](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/ci.yml)
-[![Release](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/release.yml/badge.svg)](https://github.com/YOUR_USERNAME/RHMCP/actions/workflows/release.yml)
+[![CI](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml)
+[![Release](https://github.com/AIRix315/RHMCP/actions/workflows/release.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 一个 MCP (Model Context Protocol) 服务，让 AI Agent 能够轻松调用 RunningHub 平台的生图、生视频、改图、生成音乐等功能。
@@ -20,7 +20,7 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/YOUR_USERNAME/RHMCP.git
+git clone https://github.com/AIRix315/RHMCP.git
 cd RHMCP
 
 # 2. 安装依赖
@@ -41,12 +41,12 @@ npm start
 
 **Linux/macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/RHMCP/main/scripts/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.sh | bash
 ```
 
 **Windows:**
 ```powershell
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/YOUR_USERNAME/RHMCP/main/scripts/setup.bat" -OutFile "setup.bat"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/AIRix315/RHMCP/main/scripts/setup.bat" -OutFile "setup.bat"
 .\setup.bat
 ```
 
