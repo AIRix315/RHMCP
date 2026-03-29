@@ -7,12 +7,12 @@
 
 ## 快速链接
 
-| 文档                                    | 说明                                       |
-| --------------------------------------- | ------------------------------------------ |
-| **[用户指南](docs/USER_GUIDE.md)**      | 完整使用教程，含 RunningHub APP 设置指南   |
-| **[部署指南](docs/SETUP_GUIDE.md)**     | OpenCode/Claude Desktop 接入配置           |
-| **[安装问题记录](docs/INSTALLATION_ISSUES.md)** | 常见问题及解决方案                |
-| **[共享测试 APP](#共享测试-app)**       | 免费测试 APP ID，快速体验                  |
+| 文档 | 说明 |
+|------|------|
+| **[OpenCode 配置](docs/OpenCode-setup.md)** | OpenCode MCP 集成指南 |
+| **[OpenClaw 配置](docs/OpenClaw-setup.md)** | OpenClaw MCP 集成指南 |
+| **[用户指南](docs/USER_GUIDE.md)** | 完整使用教程 |
+| **[安装问题](docs/INSTALLATION_ISSUES.md)** | 常见问题及解决方案 |
 
 ---
 
@@ -186,7 +186,7 @@ rhmcp --help
     "rhmcp": {
       "type": "local",
       "command": ["rhmcp", "--stdio"],
-      "env": {
+      "environment": {
         "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
       }
     }
@@ -200,9 +200,9 @@ rhmcp --help
 {
   "mcp": {
     "rhmcp": {
-      "command": "node",
-      "args": ["/完整路径/RHMCP/dist/server/index.js", "--stdio"],
-      "env": {
+      "type": "local",
+      "command": ["node", "/完整路径/RHMCP/dist/server/index.js", "--stdio"],
+      "environment": {
         "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
       }
     }

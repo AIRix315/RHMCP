@@ -141,22 +141,24 @@ RunningHub 支持两种方式创建 APP：
 
 ```bash
 # macOS/Linux
-vim ~/.config/opencode/mcp_config.json
+vim ~/.config/opencode/opencode.json
 
 # Windows
-notepad %APPDATA%\opencode\mcp_config.json
+notepad %APPDATA%\opencode\opencode.json
+# 或
+notepad %USERPROFILE%\.config\opencode\opencode.json
 ```
 
 2. 添加 RunningHub MCP 服务：
 
 ```json
 {
-  "mcpServers": {
-    "runninghub": {
-      "command": "node",
-      "args": ["/完整路径/RHMCP/dist/server/index.js"],
-      "env": {
-        "CONFIG_PATH": "/完整路径/RHMCP/runninghub-mcp-config.json"
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["node", "/完整路径/RHMCP/dist/server/index.js", "--stdio"],
+      "environment": {
+        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
       }
     }
   }

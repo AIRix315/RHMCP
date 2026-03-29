@@ -76,7 +76,7 @@ OpenCode 的 MCP 配置格式：
     "server-name": {
       "type": "local",
       "command": ["命令", "参数"],
-      "env": { "环境变量": "值" }
+      "environment": { "环境变量": "值" }
     }
   }
 }
@@ -126,7 +126,7 @@ await server.connect(transport);
     "rhmcp": {
       "type": "local",
       "command": ["rhmcp", "--stdio"],
-      "env": {
+      "environment": {
         "CONFIG_PATH": "/path/to/rhmcp-config.json"
       }
     }
@@ -161,8 +161,14 @@ await server.connect(transport);
 
 ```json
 {
-  "env": {
-    "CONFIG_PATH": "E:\\Projects\\RHMCP\\runninghub-mcp-config.json"
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["rhmcp", "--stdio"],
+      "environment": {
+        "CONFIG_PATH": "E:\\Projects\\RHMCP\\rhmcp-config.json"
+      }
+    }
   }
 }
 ```
@@ -171,8 +177,14 @@ await server.connect(transport);
 
 ```json
 {
-  "env": {
-    "CONFIG_PATH": "E:/Projects/RHMCP/runninghub-mcp-config.json"
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["rhmcp", "--stdio"],
+      "environment": {
+        "CONFIG_PATH": "E:/Projects/RHMCP/rhmcp-config.json"
+      }
+    }
   }
 }
 ```
@@ -213,7 +225,7 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | rhmcp --stdi
 - [ ] 验证命令可用：`rhmcp --help`
 - [ ] 验证 STDIO 模式：`echo '...' | rhmcp --stdio`
 - [ ] 配置文件使用正确的绝对路径
-- [ ] 配置正确的 `CONFIG_PATH` 环境变量
+- [ ] 配置正确的 `CONFIG_PATH` 环境变量（使用 `environment` 字段）
 
 ---
 
