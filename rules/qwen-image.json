@@ -1,0 +1,35 @@
+{
+  "name": "qwen-image",
+  "description": "通义千问图像生成模型规则",
+  "category": "image",
+  "constraints": {
+    "width": {
+      "min": 256,
+      "max": 2048,
+      "step": 1,
+      "description": "图片宽度"
+    },
+    "height": {
+      "min": 256,
+      "max": 2048,
+      "step": 1,
+      "description": "图片高度"
+    }
+  },
+  "promptSpec": {
+    "format": "natural",
+    "languages": ["zh", "en"],
+    "preferredLanguage": "zh",
+    "maxLength": 2000,
+    "examples": {
+      "good": [
+        "一只可爱的猫咪坐在窗台上，阳光透过窗户洒落",
+        "未来城市的夜景，霓虹灯闪烁，赛博朋克风格"
+      ],
+      "bad": [
+        "测试测试",
+        "123456"
+      ]
+    }
+  }
+}

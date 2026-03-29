@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-03-29",
+  "source": "https://github.com/AIRix315/RHMCP/tree/main/rules",
+  "models": {
+    "sdxl": {
+      "file": "sdxl.json",
+      "category": "image",
+      "description": "Stable Diffusion XL 模型规则"
+    },
+    "sd15": {
+      "file": "sd15.json",
+      "category": "image",
+      "description": "Stable Diffusion 1.5 模型规则"
+    },
+    "qwen-image": {
+      "file": "qwen-image.json",
+      "category": "image",
+      "description": "通义千问图像生成模型规则"
+    },
+    "flux": {
+      "file": "flux.json",
+      "category": "image",
+      "description": "FLUX 图像生成模型规则"
+    }
+  }
+}

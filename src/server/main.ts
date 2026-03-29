@@ -23,8 +23,7 @@ export function detectTransportMode(): "stdio" | "http" {
 }
 
 /**
- * 显示使用帮助
- */
+ * 显示使用帮助 */
 function showHelp(): void {
   console.log("");
   console.log("RHMCP v1.0.0 - RunningHub AI Platform MCP Server");
@@ -42,16 +41,18 @@ function showHelp(): void {
   console.log("  PORT=<port>              HTTP server port (default: 3000)");
   console.log("");
   console.log("OpenCode Configuration (STDIO):");
-  console.log('  "mcpServers": {');
+  console.log('  "mcp": {');
   console.log('    "rhmcp": {');
-  console.log('      "command": "rhmcp",');
-  console.log('      "args": ["--stdio"],');
-  console.log('      "env": { "CONFIG_PATH": "/path/to/rhmcp-config.json" }');
+  console.log('      "type": "local",');
+  console.log('      "command": ["rhmcp", "--stdio"],');
+  console.log(
+    '      "environment": { "CONFIG_PATH": "/path/to/rhmcp-config.json" }',
+  );
   console.log("    }");
   console.log("  }");
   console.log("");
   console.log("OpenCode Configuration (HTTP):");
-  console.log('  "mcpServers": {');
+  console.log('  "mcp": {');
   console.log('    "rhmcp": {');
   console.log('      "type": "http",');
   console.log('      "url": "http://localhost:3000/mcp"');
