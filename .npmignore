@@ -1,0 +1,39 @@
+# Source files
+src/
+tests/
+*.ts
+!*.d.ts
+
+# Development files
+.github/
+.vscode/
+.idea/
+.sisyphus/
+
+# Config files (user should create their own)
+.env
+.env.local
+.env.*.local
+service.json
+apps.json
+rhmcp-config.json
+runninghub-mcp-config.json
+*.example
+
+# Build artifacts
+*.log
+coverage/
+node_modules/
+
+# Output files
+output/
+cache/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db

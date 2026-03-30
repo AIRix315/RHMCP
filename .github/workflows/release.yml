@@ -3,13 +3,13 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-          cache: 'npm'
+          node-version: "20.x"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -32,69 +32,21 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Create release archive
-        run: |
-          mkdir -p release
-          cp -r dist/ release/
-          cp package.json package-lock.json release/
-          cp README.md release/ 2>/dev/null || true
-          cp -r config/ release/ 2>/dev/null || true
-          tar -czvf runninghub-mcp-v${{ steps.version.outputs.VERSION }}.tar.gz -C release .
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: RunningHub MCP v${{ steps.version.outputs.VERSION }}
+          name: v${{ steps.version.outputs.VERSION }}
           body: |
-            ## Release v${{ steps.version.outputs.VERSION }}
-            
-            ### Installation
-            
+            ## Installation
+
             ```bash
-            # Download the release
-            tar -xzf runninghub-mcp-v${{ steps.version.outputs.VERSION }}.tar.gz
-            cd runninghub-mcp-v${{ steps.version.outputs.VERSION }}
-            
-            # Install dependencies
-            npm install --production
-            
-            # Configure
-            cp config/runninghub-mcp-config.example.json runninghub-mcp-config.json
-            # Edit with your API key
-            
-            # Run
-            npm start
+            # Install globally
+            npm install -g runninghub-mcp@${{ steps.version.outputs.VERSION }}
+
+            # Or run directly with npx
+            npx runninghub-mcp@${{ steps.version.outputs.VERSION }} --stdio
             ```
-            
-            ### What's Changed
-            See [CHANGELOG.md](CHANGELOG.md) for details.
-          files: runninghub-mcp-v${{ steps.version.outputs.VERSION }}.tar.gz
+
+            **What's Changed**: See [CHANGELOG.md](CHANGELOG.md)
           draft: false
           prerelease: false
-
-  publish-npm:
-    runs-on: ubuntu-latest
-    needs: build-and-release
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Publish to npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: true

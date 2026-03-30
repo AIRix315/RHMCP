@@ -1,6 +1,7 @@
 # RHMCP
 
 [![CI](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml/badge.svg)](https://github.com/AIRix315/RHMCP/actions/workflows/ci.yml)
+[![NPM Version](https://img.shields.io/npm/v/runninghub-mcp.svg)](https://www.npmjs.com/package/runninghub-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 🚀 **RHMCP** - RunningHub AI Platform MCP Server - 让 AI Agent 调用生图、视频生成、音频处理等功能。
@@ -9,42 +10,107 @@
 
 ## 文档导航
 
-| 客户端             | 文档                                                                                                  |
-| ------------------ | ----------------------------------------------------------------------------------------------------- |
-| **OpenCode**       | [配置指南](docs/OpenCode-setup.md)                                                                    |
-| **OpenClaw**       | [配置指南](docs/OpenClaw-setup.md) → [快速指南](docs/openclaw/GUIDE.md) → [FAQ](docs/openclaw/FAQ.md) |
-| **Claude Desktop** | 参考 OpenCode 配置                                                                                    |
-| **通用**           | [用户指南](docs/USER_GUIDE.md)                                                                        |
+| 客户端             | 文档                               |
+| ------------------ | ---------------------------------- |
+| **OpenCode**       | [配置指南](docs/OpenCode-setup.md) |
+| **OpenClaw**       | [配置指南](docs/OpenClaw-setup.md) |
+| **Claude Desktop** | 参考 OpenCode 配置                 |
+| **常见问题**       | [FAQ](docs/openclaw/FAQ.md)        |
 
 ---
 
-## 快速开始
+## 安装使用
+
+### 全局安装（推荐）
 
 ```bash
-# 克隆并构建
+npm install -g runninghub-mcp
+
+# 验证安装
+rhmcp --help
+```
+
+### 直接运行（无需安装）
+
+```bash
+npx runninghub-mcp --stdio
+```
+
+### 配置
+
+```bash
+# 创建配置目录
+mkdir -p ~/.rhmcp
+
+# 设置 API Key
+echo "RUNNINGHUB_API_KEY=your_api_key_here" > ~/.rhmcp/.env
+
+# 创建 service.json
+cat > ~/.rhmcp/service.json << 'EOF'
+{
+  "baseUrl": "auto",
+  "maxConcurrent": 1,
+  "storage": { "mode": "none" }
+}
+EOF
+
+# 创建 apps.json（运行更新命令填充官方 APP）
+rhmcp --update-apps ~/.rhmcp/apps.json
+```
+
+### MCP 客户端配置
+
+**OpenCode** (`~/.config/opencode/opencode.json`):
+
+```json
+{
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["rhmcp", "--stdio"],
+      "environment": {
+        "RHMCP_CONFIG": "/home/user/.rhmcp"
+      }
+    }
+  }
+}
+```
+
+**Claude Desktop** (macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "rhmcp": {
+      "command": "rhmcp",
+      "args": ["--stdio"],
+      "env": {
+        "RHMCP_CONFIG": "/home/user/.rhmcp"
+      }
+    }
+  }
+}
+```
+
+---
+
+## 开发指南
+
+如需修改源码：
+
+```bash
 git clone https://github.com/AIRix315/RHMCP.git
 cd RHMCP
 npm install
 npm run build
 
-# 创建配置
-cp service.json.example service.json
-cp apps.json.example apps.json
-echo "RUNNINGHUB_API_KEY=your_api_key" > .env
+# 开发模式
+npm run dev        # HTTP 模式
+npm run dev:stdio  # STDIO 模式
 
-# 验证安装
-node dist/server/index.js --stdio
+# 测试
+npm test
 ```
-
----
-
-## 配置要点
-
-| 配置项       | 说明                                                                             |
-| ------------ | -------------------------------------------------------------------------------- |
-| **baseUrl**  | `auto`（自动检测）、`www.runninghub.cn`（国内站）、`www.runninghub.ai`（国际站） |
-| **API Key**  | 从 [RunningHub 控制台](https://www.runninghub.cn) 获取                           |
-| **环境变量** | `RHMCP_CONFIG` 指向配置**目录**                                                  |
 
 ---
 
@@ -63,12 +129,26 @@ node dist/server/index.js --stdio
 
 ---
 
-## 开发
+## 配置要点
+
+| 配置项       | 说明                                                                             |
+| ------------ | -------------------------------------------------------------------------------- |
+| **baseUrl**  | `auto`（自动检测）、`www.runninghub.cn`（国内站）、`www.runninghub.ai`（国际站） |
+| **API Key**  | 从 [RunningHub 控制台](https://www.runninghub.cn) 获取                           |
+| **环境变量** | `RHMCP_CONFIG` 指向配置**目录**                                                  |
+
+---
+
+## 发布流程（维护者）
 
 ```bash
-npm run dev        # HTTP 模式
-npm run dev:stdio  # STDIO 模式
-npm test           # 运行测试
+# 1. 更新版本号
+npm version patch|minor|major
+
+# 2. 推送标签
+git push --tags
+
+# 3. GitHub Actions 自动发布到 NPM
 ```
 
 ---
