@@ -55,9 +55,12 @@ export function validateParams(
     const value = params[paramName];
     const constraint = constraints[paramName] || {};
 
-    // 检查必填
-    if (paramConfig.required && (value === undefined || value === "")) {
-      errors.push(`参数 "${paramName}" 是必填项`);
+    // 检查是否有值
+    if (value === undefined || value === "") {
+      // 检查是否为需要上传的类型（IMAGE/AUDIO/VIDEO）
+      if (paramConfig.constraints?.image_upload) {
+        warnings.push(`参数 "${paramName}" 需要上传文件`);
+      }
       continue;
     }
 

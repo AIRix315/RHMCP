@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
-import { AppConfig, InputParam } from "../types.js";
+import { AppConfig } from "../types.js";
 
 const AddAppSchema = z.object({
   appId: z.string().describe("APP ID"),
@@ -43,10 +43,11 @@ export const addAppTool = {
     for (const node of result.data.nodeInfoList) {
       appConfig.inputs[node.fieldName] = {
         nodeId: node.nodeId,
+        nodeName: node.nodeName,
         fieldName: node.fieldName,
-        type: node.fieldType as InputParam["type"],
-        required: false,
+        type: node.fieldType,
         description: node.description,
+        descriptionEn: node.descriptionEn,
         default: node.fieldValue,
       };
     }

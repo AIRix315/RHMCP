@@ -7,6 +7,9 @@ import { startHttpServer } from "./http.js";
 import { startStdioServer } from "./stdio.js";
 import { updateApps } from "../cli/update-apps.js";
 import { migrate, findLegacyConfig } from "../cli/migrate.js";
+import { checkApp, formatCheckResult } from "../cli/check-app.js";
+import { createClient } from "../api/client.js";
+import { loadConfig } from "../config/loader.js";
 
 /**
  * 检测运行模式
@@ -15,6 +18,7 @@ export function detectTransportMode(): "stdio" | "http" | "cli" {
   // CLI 命令优先检测
   if (process.argv.includes("--update-apps")) return "cli";
   if (process.argv.includes("--migrate")) return "cli";
+  if (process.argv.includes("--check-app")) return "cli";
 
   // 传输模式检测
   if (process.argv.includes("--stdio")) return "stdio";
@@ -35,6 +39,7 @@ function showHelp(): void {
   console.log("  rhmcp --stdio            Start STDIO server");
   console.log("  rhmcp --http             Start HTTP server");
   console.log("  rhmcp --update-apps      Update APP list from GitHub");
+  console.log("  rhmcp --check-app <id>   Check APP compatibility");
   console.log("  rhmcp --migrate          Migrate old config to new format");
   console.log("  rhmcp --help             Show this help");
   console.log("");
@@ -88,6 +93,27 @@ async function handleCliCommand(): Promise<void> {
     const appsFile = args[appsFileIndex + 1] || "./apps.json";
     await updateApps(appsFile);
     process.exit(0);
+  }
+
+  if (args.includes("--check-app")) {
+    const checkAppIndex = args.indexOf("--check-app");
+    const appId = args[checkAppIndex + 1];
+
+    if (!appId) {
+      console.error("[RHMCP] 用法: rhmcp --check-app <appId>");
+      process.exit(1);
+    }
+
+    try {
+      const config = await loadConfig();
+      const client = createClient(config);
+      const result = await checkApp(appId, client);
+      console.log(formatCheckResult(result));
+      process.exit(0);
+    } catch (error) {
+      console.error(`[RHMCP] 检查失败: ${error instanceof Error ? error.message : error}`);
+      process.exit(1);
+    }
   }
 
   if (args.includes("--migrate")) {

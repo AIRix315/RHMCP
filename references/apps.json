@@ -1,19 +1,113 @@
 {
   "server": {
+    "_updated": "2026-03-30T00:00:00Z",
+    "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json",
+
     "qwen-text-to-image": {
       "appId": "2037760725296357377",
       "alias": "qwen-text-to-image",
       "category": "image",
-      "description": "Qwen文生图"
+      "webappName": "AIRix [API] Qwen-001 文生图",
+      "modelName": "Qwen-001",
+      "usageType": "文生图",
+      "description": "Qwen 文生图。适用于：中文描述、创意插图。",
+      "mcpLevel": "full",
+      "inputs": {
+        "text": {
+          "nodeId": "16",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        },
+        "width": {
+          "nodeId": "19",
+          "nodeName": "PrimitiveInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Width",
+          "descriptionEn": "Width",
+          "processHint": "direct",
+          "constraints": {
+            "min": -9223372036854775807,
+            "max": 9223372036854775807,
+            "control_after_generate": true
+          }
+        },
+        "height": {
+          "nodeId": "20",
+          "nodeName": "PrimitiveInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "High",
+          "descriptionEn": "High",
+          "processHint": "direct",
+          "constraints": {
+            "min": -9223372036854775807,
+            "max": 9223372036854775807,
+            "control_after_generate": true
+          }
+        }
+      },
+      "tags": ["chinese", "creative", "text-to-image"],
+      "capabilities": {
+        "strengths": ["中文理解强", "创意生成"],
+        "bestFor": ["创意插图", "概念设计"],
+        "speed": "fast",
+        "quality": "medium"
+      },
+      "default": true
     },
+
     "qwen-image-to-image": {
       "appId": "2037822548796252162",
       "alias": "qwen-image-to-image",
       "category": "image",
-      "description": "Qwen提示词改图"
-    },
-    "_updated": "2026-03-30T00:00:00Z",
-    "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json"
+      "webappName": "AIRix [API] Qwen003 提示词改图",
+      "modelName": "Qwen003",
+      "usageType": "提示词改图",
+      "description": "Qwen 提示词改图。适用于：图像风格转换、局部修改。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "image": {
+          "nodeId": "13",
+          "nodeName": "LoadImage",
+          "fieldName": "image",
+          "type": "IMAGE",
+          "description": "RefImage",
+          "descriptionEn": "RefImage",
+          "processHint": "upload",
+          "constraints": {
+            "image_upload": true
+          }
+        },
+        "text": {
+          "nodeId": "30",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        }
+      },
+      "tags": ["chinese", "image-editing", "style-transfer"],
+      "capabilities": {
+        "strengths": ["提示词理解强", "风格转换"],
+        "bestFor": ["图像修改", "风格迁移"],
+        "speed": "medium"
+      }
+    }
   },
   "user": {
     "_comment": "用户自定义的APP配置放在这里"

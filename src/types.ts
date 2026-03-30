@@ -59,25 +59,71 @@ export interface CloudStorageConfig {
   region?: string;
 }
 
+/**
+ * APP 效果预览图
+ */
+export interface CoverInfo {
+  id: string;
+  url: string;
+  thumbnailUri: string;
+  imageWidth?: string;
+  imageHeight?: string;
+}
+
+/**
+ * APP 能力描述
+ */
+export interface AppCapabilities {
+  strengths?: string[]; // 优势
+  bestFor?: string[]; // 最佳用途
+  limitations?: string[]; // 限制
+  speed?: "fast" | "medium" | "slow";
+  quality?: "low" | "medium" | "high" | "ultra";
+}
+
+/**
+ * 输入参数约束（从 fieldData 解析）
+ */
+export interface InputConstraints {
+  min?: number;
+  max?: number;
+  step?: number;
+  multiline?: boolean;
+  dynamicPrompts?: boolean;
+  image_upload?: boolean;
+  control_after_generate?: boolean;
+}
+
 export interface AppConfig {
   appId: string;
   alias: string;
   modelFamily?: string;
   category: "image" | "audio" | "video";
   description?: string;
+  webappName?: string; // API 返回的完整名称
+  modelName?: string; // 从 webappName 提取的模型名
+  usageType?: string; // 从 webappName 提取的用途
+  covers?: CoverInfo[]; // 效果预览图
   inputs: Record<string, InputParam>;
   outputs?: string[];
   constraints?: Record<string, Constraint>;
+  capabilities?: AppCapabilities;
+  tags?: string[];
+  mcpLevel?: "full" | "partial" | "manual";
+  default?: boolean;
 }
 
 export interface InputParam {
   nodeId: string;
+  nodeName?: string;
   fieldName: string;
-  type: "STRING" | "INT" | "FLOAT" | "IMAGE" | "AUDIO" | "VIDEO" | "LIST" | "SWITCH";
-  required: boolean;
+  type: string; // 动态类型，不硬编码枚举
   description?: string;
+  descriptionEn?: string;
   default?: string | number;
-  options?: string[];
+  options?: string[]; // LIST/INT 的选项值
+  processHint?: "direct" | "upload" | "manual";
+  constraints?: InputConstraints;
 }
 
 export interface Constraint {
@@ -123,6 +169,7 @@ export interface NodeInfo {
   fieldType: string;
   fieldData?: string;
   description?: string;
+  descriptionEn?: string;
 }
 
 export interface TaskResult {
@@ -144,7 +191,7 @@ export interface AppInfoResponse {
   nodeInfoList: NodeInfo[];
   webappName?: string;
   description?: string;
-  covers?: string[];
+  covers?: CoverInfo[];
 }
 
 export interface TaskSubmitResponse {
