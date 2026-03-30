@@ -1,0 +1,16 @@
+{
+  "$schema": "./docs/schemas/apps.schema.json",
+  "server": {
+    "_comment": "服务端预配置的APP，由平台维护"
+  },
+  "user": {
+    "_comment": "用户自定义的APP配置",
+    "example-app": {
+      "appId": "YOUR_APP_ID",
+      "alias": "example-app",
+      "category": "image",
+      "description": "示例APP配置",
+      "inputs": {}
+    }
+  }
+}

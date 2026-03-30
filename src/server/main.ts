@@ -109,8 +109,3 @@ async function handleCliCommand(): Promise<void> {
   showHelp();
   process.exit(1);
 }
-
-main().catch((error: unknown) => {
-  console.error("Failed to start:", error);
-  process.exit(1);
-});

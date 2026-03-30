@@ -53,7 +53,7 @@ export interface ServerContext {
   server: McpServer;
   client: RunningHubClient;
   config: RunningHubConfig;
-  configPath: string;
+  configPath: string | undefined;
 }
 
 /**

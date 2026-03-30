@@ -12,6 +12,12 @@ output/
 
 # User configuration (contains API key)
 runninghub-mcp-config.json
+rhmcp-config.json
+
+# But allow template/example files
+!*.template.json
+!service.json.example
+!apps.json.example
 
 # Environment variables
 .env

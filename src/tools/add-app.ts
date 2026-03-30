@@ -20,7 +20,7 @@ export const addAppTool = {
   async handler(
     args: z.infer<typeof AddAppSchema>,
     client: RunningHubClient,
-    configPathOrConfig: string | { apps: Record<string, AppConfig> },
+    configPathOrConfig?: string | { apps: Record<string, AppConfig> },
   ) {
     // 1. 获取APP配置
     const result = await client.getAppInfo(args.appId);

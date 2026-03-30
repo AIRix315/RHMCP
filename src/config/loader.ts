@@ -264,10 +264,12 @@ function findLegacyConfig(configPath?: string): string | null {
   const cwd = process.cwd();
   
   // 优先检查新格式
-  if (existsSync(join(cwd, NEW_CONFIG_FILES.service))) {
+  const servicePath = join(cwd, NEW_CONFIG_FILES.service);
+  if (existsSync(servicePath)) {
     return null; // 新格式存在，返回 null
   }
   
+  // 检查旧格式
   const names = [DEFAULT_CONFIG_NAME, LEGACY_CONFIG_NAME];
   for (const name of names) {
     const path = join(cwd, name);

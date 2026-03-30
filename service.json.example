@@ -1,0 +1,21 @@
+{
+  "$schema": "./docs/schemas/service.schema.json",
+  "baseUrl": "www.runninghub.cn",
+  "maxConcurrent": 1,
+  "storage": {
+    "mode": "local",
+    "path": "./output"
+  },
+  "retry": {
+    "maxRetries": 3,
+    "maxWaitTime": 600,
+    "interval": 5
+  },
+  "logging": {
+    "level": "info"
+  },
+  "modelRules": {
+    "rules": {},
+    "defaultLanguage": "zh"
+  }
+}
