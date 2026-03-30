@@ -3,10 +3,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 const ValidateConfigSchema = z.object({
-  configPath: z
-    .string()
-    .optional()
-    .describe("配置文件路径（可选，默认使用标准路径）"),
+  configPath: z.string().optional().describe("配置文件路径（可选，默认使用标准路径）"),
 });
 
 export const validateConfigTool = {

@@ -7,21 +7,14 @@ import { existsSync } from "fs";
 
 const UpdateRulesSchema = z.object({
   model: z.string().optional().describe("模型名称（可选，不填则更新全部）"),
-  source: z
-    .enum(["local", "github"])
-    .optional()
-    .default("local")
-    .describe("规则来源"),
+  source: z.enum(["local", "github"]).optional().default("local").describe("规则来源"),
 });
 
 interface RulesIndex {
   version: string;
   updated: string;
   source?: string;
-  models: Record<
-    string,
-    { file: string; category: string; description?: string }
-  >;
+  models: Record<string, { file: string; category: string; description?: string }>;
 }
 
 // GitHub 仓库地址（正确的格式）
@@ -54,7 +47,7 @@ export const updateRulesTool = {
 
   async handler(
     args: z.infer<typeof UpdateRulesSchema>,
-    config: RunningHubConfig,
+    config: RunningHubConfig
   ): Promise<UpdateRulesResult> {
     const source = args.source || "local";
     const localRulesDir = getLocalRulesDir();
@@ -78,20 +71,14 @@ export const updateRulesTool = {
       // 从本地读取索引
       const indexPath = join(localRulesDir, "index.json");
       if (!existsSync(indexPath)) {
-        throw new Error(
-          "本地规则索引不存在，请使用 source: 'github' 从 GitHub 更新",
-        );
+        throw new Error("本地规则索引不存在，请使用 source: 'github' 从 GitHub 更新");
       }
-      const indexContent = await import("fs/promises").then((m) =>
-        m.readFile(indexPath, "utf-8"),
-      );
+      const indexContent = await import("fs/promises").then((m) => m.readFile(indexPath, "utf-8"));
       index = JSON.parse(indexContent);
     }
 
     // 2. 确定要更新的模型
-    const modelsToUpdate = args.model
-      ? [args.model]
-      : Object.keys(index.models);
+    const modelsToUpdate = args.model ? [args.model] : Object.keys(index.models);
 
     const results: Array<{ model: string; status: string }> = [];
 
@@ -125,9 +112,7 @@ export const updateRulesTool = {
             results.push({ model, status: "LOCAL_FILE_NOT_FOUND" });
             continue;
           }
-          ruleContent = await import("fs/promises").then((m) =>
-            m.readFile(localPath, "utf-8"),
-          );
+          ruleContent = await import("fs/promises").then((m) => m.readFile(localPath, "utf-8"));
         }
 
         // 验证 JSON 格式

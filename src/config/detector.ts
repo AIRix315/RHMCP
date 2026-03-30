@@ -23,10 +23,7 @@ interface DetectResult {
  * @param testAppId 用于测试的 APP ID（可选）
  * @returns 检测到的站点 URL
  */
-export async function detectBaseUrl(
-  apiKey: string,
-  testAppId?: string,
-): Promise<string> {
+export async function detectBaseUrl(apiKey: string, testAppId?: string): Promise<string> {
   const appId = testAppId || DEFAULT_TEST_APP_ID;
 
   console.error("[RHMCP] 正在自动检测账号归属站点...");
@@ -40,7 +37,7 @@ export async function detectBaseUrl(
           {
             method: "GET",
             signal: AbortSignal.timeout(5000),
-          },
+          }
         );
         const latency = Date.now() - startTime;
 
@@ -54,7 +51,7 @@ export async function detectBaseUrl(
       } catch {
         return { ...endpoint, success: false, latency: Infinity };
       }
-    }),
+    })
   );
 
   // 优先选择成功且延迟最低的
@@ -62,9 +59,7 @@ export async function detectBaseUrl(
   if (successful.length > 0) {
     successful.sort((a, b) => a.latency - b.latency);
     const selected = successful[0];
-    console.error(
-      `[RHMCP] 检测到账号注册于: ${selected.name} (${selected.url})`,
-    );
+    console.error(`[RHMCP] 检测到账号注册于: ${selected.name} (${selected.url})`);
     return selected.url;
   }
 

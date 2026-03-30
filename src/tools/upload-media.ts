@@ -16,7 +16,7 @@ export const uploadMediaTool = {
 
   async handler(
     args: z.infer<typeof UploadMediaSchema>,
-    client: RunningHubClient,
+    client: RunningHubClient
   ): Promise<{ fileName: string }> {
     // 1. 验证文件存在
     const stats = await stat(args.filePath);
@@ -26,19 +26,14 @@ export const uploadMediaTool = {
 
     // 2. 验证文件大小
     if (stats.size > MAX_FILE_SIZE) {
-      throw new Error(
-        `文件过大，最大支持30MB。当前: ${(stats.size / 1024 / 1024).toFixed(2)}MB`,
-      );
+      throw new Error(`文件过大，最大支持30MB。当前: ${(stats.size / 1024 / 1024).toFixed(2)}MB`);
     }
 
     // 3. 读取文件
     const buffer = await readFile(args.filePath);
 
     // 4. 调用API上传
-    const result = await client.uploadFile(
-      new Uint8Array(buffer),
-      args.fileType,
-    );
+    const result = await client.uploadFile(new Uint8Array(buffer), args.fileType);
 
     if (result.code !== 0) {
       throw new Error(`上传失败: ${result.msg}`);

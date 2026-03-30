@@ -1,23 +1,13 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
-import {
-  NodeInfo,
-  RetryConfig,
-  AppConfig,
-  StorageConfig,
-  RunningHubConfig,
-} from "../types.js";
+import { NodeInfo, RetryConfig, AppConfig, StorageConfig, RunningHubConfig } from "../types.js";
 import { processOutput, ensureOutputDir } from "../utils/storage.js";
 
 const ExecuteAppSchema = z.object({
   appId: z.string().optional().describe("APP ID"),
   alias: z.string().optional().describe("APP别名"),
   params: z.record(z.any()).describe("参数键值对"),
-  mode: z
-    .enum(["sync", "async"])
-    .optional()
-    .default("sync")
-    .describe("执行模式"),
+  mode: z.enum(["sync", "async"]).optional().default("sync").describe("执行模式"),
 });
 
 /**
@@ -61,7 +51,7 @@ export const executeAppTool = {
   async handler(
     args: z.infer<typeof ExecuteAppSchema>,
     client: RunningHubClient,
-    config: RunningHubConfig,
+    config: RunningHubConfig
   ) {
     const apps = getMergedApps(config);
 
@@ -72,8 +62,7 @@ export const executeAppTool = {
     }
 
     // 2. 构建nodeInfoList
-    const appConfig =
-      apps[Object.keys(apps).find((k) => apps[k].appId === appId) || ""];
+    const appConfig = apps[Object.keys(apps).find((k) => apps[k].appId === appId) || ""];
 
     const nodeInfoList: NodeInfo[] = [];
     if (appConfig?.inputs) {
@@ -83,8 +72,7 @@ export const executeAppTool = {
           nodeInfoList.push({
             nodeId: paramConfig.nodeId,
             fieldName: paramConfig.fieldName,
-            fieldValue:
-              typeof value === "object" ? JSON.stringify(value) : String(value),
+            fieldValue: typeof value === "object" ? JSON.stringify(value) : String(value),
           } as NodeInfo);
         }
       }
@@ -105,12 +93,9 @@ export const executeAppTool = {
 
     // 5. 同步模式：轮询等待结果
     const startTime = Date.now();
-    const maxWait =
-      (appConfig as any).retry?.maxWaitTime || config.retry.maxWaitTime;
-    const interval =
-      (appConfig as any).retry?.interval || config.retry.interval;
-    const maxRetries =
-      (appConfig as any).retry?.maxRetries || config.retry.maxRetries;
+    const maxWait = (appConfig as any).retry?.maxWaitTime || config.retry.maxWaitTime;
+    const interval = (appConfig as any).retry?.interval || config.retry.interval;
+    const maxRetries = (appConfig as any).retry?.maxRetries || config.retry.maxRetries;
 
     let retries = 0;
     while (Date.now() - startTime < maxWait * 1000) {
@@ -134,7 +119,7 @@ export const executeAppTool = {
               output.fileUrl,
               `${i + 1}`,
               config.storage,
-              taskId,
+              taskId
             );
             processedOutputs.push({
               ...output,

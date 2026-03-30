@@ -62,9 +62,7 @@ type JsonConfig = Record<string, unknown>;
 /**
  * 加载配置（异步版本，支持 baseUrl 自动检测）
  */
-export async function loadConfig(
-  configPath?: string,
-): Promise<RunningHubConfig> {
+export async function loadConfig(configPath?: string): Promise<RunningHubConfig> {
   const explicitPath = configPath || process.env[ENV_CONFIG_PATH];
 
   // 1. 尝试加载旧格式（向后兼容）
@@ -96,24 +94,15 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
   const appsConfig = loadJsonFile(appsPath) as AppsConfig | null;
 
   // 合并配置
-  const baseUrl =
-    process.env[ENV_BASE_URL] || getString(serviceConfig, "baseUrl", "auto");
+  const baseUrl = process.env[ENV_BASE_URL] || getString(serviceConfig, "baseUrl", "auto");
 
   const config: RunningHubConfig = {
     apiKey: process.env[ENV_API_KEY] || getString(serviceConfig, "apiKey", ""),
     baseUrl: baseUrl,
-    maxConcurrent: getNumber(
-      serviceConfig,
-      "maxConcurrent",
-      DEFAULTS.maxConcurrent,
-    ),
+    maxConcurrent: getNumber(serviceConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
     storage: {
       mode: getStorageMode(serviceConfig, DEFAULTS.storage.mode),
-      path: getString(
-        getObject(serviceConfig, "storage"),
-        "path",
-        DEFAULTS.storage.path,
-      ),
+      path: getString(getObject(serviceConfig, "storage"), "path", DEFAULTS.storage.path),
       cloudConfig: getCloudConfig(serviceConfig),
     },
     appsConfig: appsConfig || { server: {}, user: {} },
@@ -123,25 +112,21 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
       defaultLanguage: getString(
         getObject(serviceConfig, "modelRules"),
         "defaultLanguage",
-        DEFAULTS.modelRules.defaultLanguage,
+        DEFAULTS.modelRules.defaultLanguage
       ),
     },
     retry: {
       maxRetries: getNumber(
         getObject(serviceConfig, "retry"),
         "maxRetries",
-        DEFAULTS.retry.maxRetries,
+        DEFAULTS.retry.maxRetries
       ),
       maxWaitTime: getNumber(
         getObject(serviceConfig, "retry"),
         "maxWaitTime",
-        DEFAULTS.retry.maxWaitTime,
+        DEFAULTS.retry.maxWaitTime
       ),
-      interval: getNumber(
-        getObject(serviceConfig, "retry"),
-        "interval",
-        DEFAULTS.retry.interval,
-      ),
+      interval: getNumber(getObject(serviceConfig, "retry"), "interval", DEFAULTS.retry.interval),
     },
     logging: {
       level: getLogLevel(serviceConfig, DEFAULTS.logging.level),
@@ -152,7 +137,7 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
   if (config.baseUrl === "auto") {
     if (!config.apiKey) {
       throw new Error(
-        'baseUrl 设置为 "auto" 时，需要提供 apiKey（通过环境变量 RUNNINGHUB_API_KEY）',
+        'baseUrl 设置为 "auto" 时，需要提供 apiKey（通过环境变量 RUNNINGHUB_API_KEY）'
       );
     }
     config.baseUrl = await detectBaseUrl(config.apiKey);
@@ -164,11 +149,7 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
 /**
  * 辅助函数：安全获取字符串值
  */
-function getString(
-  obj: JsonConfig | null,
-  key: string,
-  defaultValue: string,
-): string {
+function getString(obj: JsonConfig | null, key: string, defaultValue: string): string {
   if (!obj) return defaultValue;
   const value = obj[key];
   return typeof value === "string" ? value : defaultValue;
@@ -177,11 +158,7 @@ function getString(
 /**
  * 辅助函数：安全获取数字值
  */
-function getNumber(
-  obj: JsonConfig | null,
-  key: string,
-  defaultValue: number,
-): number {
+function getNumber(obj: JsonConfig | null, key: string, defaultValue: number): number {
   if (!obj) return defaultValue;
   const value = obj[key];
   return typeof value === "number" ? value : defaultValue;
@@ -203,17 +180,12 @@ function getObject(obj: JsonConfig | null, key: string): JsonConfig | null {
  */
 function getStorageMode(
   obj: JsonConfig | null,
-  defaultValue: StorageConfig["mode"],
+  defaultValue: StorageConfig["mode"]
 ): StorageConfig["mode"] {
   const storage = getObject(obj, "storage");
   if (!storage) return defaultValue;
   const mode = storage.mode;
-  if (
-    mode === "local" ||
-    mode === "network" ||
-    mode === "auto" ||
-    mode === "none"
-  ) {
+  if (mode === "local" || mode === "network" || mode === "auto" || mode === "none") {
     return mode;
   }
   return defaultValue;
@@ -222,9 +194,7 @@ function getStorageMode(
 /**
  * 辅助函数：获取云存储配置
  */
-function getCloudConfig(
-  obj: JsonConfig | null,
-): CloudStorageConfig | undefined {
+function getCloudConfig(obj: JsonConfig | null): CloudStorageConfig | undefined {
   const storage = getObject(obj, "storage");
   if (!storage) return undefined;
   const cloudConfig = getObject(storage, "cloudConfig");
@@ -266,20 +236,12 @@ function getModelRules(obj: JsonConfig | null): ModelRulesConfig["rules"] {
 /**
  * 辅助函数：获取日志级别
  */
-function getLogLevel(
-  obj: JsonConfig | null,
-  defaultValue: LogConfig["level"],
-): LogConfig["level"] {
+function getLogLevel(obj: JsonConfig | null, defaultValue: LogConfig["level"]): LogConfig["level"] {
   const logging = getObject(obj, "logging");
   if (!logging) return defaultValue;
 
   const level = logging.level;
-  if (
-    level === "debug" ||
-    level === "info" ||
-    level === "warn" ||
-    level === "error"
-  ) {
+  if (level === "debug" || level === "info" || level === "warn" || level === "error") {
     return level;
   }
   return defaultValue;
@@ -298,9 +260,7 @@ function loadEnvFile(dir: string): void {
 /**
  * 合并 server 和 user APP 配置（user 优先）
  */
-export function mergeApps(
-  appsConfig: AppsConfig | undefined | null,
-): Record<string, AppConfig> {
+export function mergeApps(appsConfig: AppsConfig | undefined | null): Record<string, AppConfig> {
   if (!appsConfig) return {};
 
   const merged: Record<string, AppConfig> = {};
@@ -365,24 +325,15 @@ async function migrateAndLoad(oldPath: string): Promise<RunningHubConfig> {
   }
 
   const apiKey = process.env[ENV_API_KEY] || getString(rawConfig, "apiKey", "");
-  const baseUrl =
-    process.env[ENV_BASE_URL] || getString(rawConfig, "baseUrl", "auto");
+  const baseUrl = process.env[ENV_BASE_URL] || getString(rawConfig, "baseUrl", "auto");
 
   const config: RunningHubConfig = {
     apiKey,
     baseUrl,
-    maxConcurrent: getNumber(
-      rawConfig,
-      "maxConcurrent",
-      DEFAULTS.maxConcurrent,
-    ),
+    maxConcurrent: getNumber(rawConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
     storage: {
       mode: getStorageMode(rawConfig, DEFAULTS.storage.mode),
-      path: getString(
-        getObject(rawConfig, "storage"),
-        "path",
-        DEFAULTS.storage.path,
-      ),
+      path: getString(getObject(rawConfig, "storage"), "path", DEFAULTS.storage.path),
       cloudConfig: getCloudConfig(rawConfig),
     },
     apps: (rawConfig.apps as Record<string, AppConfig>) || {},
@@ -395,25 +346,17 @@ async function migrateAndLoad(oldPath: string): Promise<RunningHubConfig> {
       defaultLanguage: getString(
         getObject(rawConfig, "modelRules"),
         "defaultLanguage",
-        DEFAULTS.modelRules.defaultLanguage,
+        DEFAULTS.modelRules.defaultLanguage
       ),
     },
     retry: {
-      maxRetries: getNumber(
-        getObject(rawConfig, "retry"),
-        "maxRetries",
-        DEFAULTS.retry.maxRetries,
-      ),
+      maxRetries: getNumber(getObject(rawConfig, "retry"), "maxRetries", DEFAULTS.retry.maxRetries),
       maxWaitTime: getNumber(
         getObject(rawConfig, "retry"),
         "maxWaitTime",
-        DEFAULTS.retry.maxWaitTime,
+        DEFAULTS.retry.maxWaitTime
       ),
-      interval: getNumber(
-        getObject(rawConfig, "retry"),
-        "interval",
-        DEFAULTS.retry.interval,
-      ),
+      interval: getNumber(getObject(rawConfig, "retry"), "interval", DEFAULTS.retry.interval),
     },
     logging: {
       level: getLogLevel(rawConfig, DEFAULTS.logging.level),
@@ -423,9 +366,7 @@ async function migrateAndLoad(oldPath: string): Promise<RunningHubConfig> {
   // 处理 baseUrl 自动检测
   if (config.baseUrl === "auto") {
     if (!config.apiKey) {
-      console.error(
-        "[RHMCP] 警告: baseUrl 为 auto 但未提供 apiKey，使用默认域名",
-      );
+      console.error("[RHMCP] 警告: baseUrl 为 auto 但未提供 apiKey，使用默认域名");
       config.baseUrl = "www.runninghub.cn";
     } else {
       config.baseUrl = await detectBaseUrl(config.apiKey);
@@ -482,21 +423,11 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
 
     return {
       apiKey: process.env[ENV_API_KEY] || getString(rawConfig, "apiKey", ""),
-      baseUrl:
-        process.env[ENV_BASE_URL] ||
-        getString(rawConfig, "baseUrl", DEFAULTS.baseUrl),
-      maxConcurrent: getNumber(
-        rawConfig,
-        "maxConcurrent",
-        DEFAULTS.maxConcurrent,
-      ),
+      baseUrl: process.env[ENV_BASE_URL] || getString(rawConfig, "baseUrl", DEFAULTS.baseUrl),
+      maxConcurrent: getNumber(rawConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
       storage: {
         mode: getStorageMode(rawConfig, DEFAULTS.storage.mode),
-        path: getString(
-          getObject(rawConfig, "storage"),
-          "path",
-          DEFAULTS.storage.path,
-        ),
+        path: getString(getObject(rawConfig, "storage"), "path", DEFAULTS.storage.path),
         cloudConfig: getCloudConfig(rawConfig),
       },
       apps: (rawConfig.apps as Record<string, AppConfig>) || {},
@@ -509,25 +440,21 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
         defaultLanguage: getString(
           getObject(rawConfig, "modelRules"),
           "defaultLanguage",
-          DEFAULTS.modelRules.defaultLanguage,
+          DEFAULTS.modelRules.defaultLanguage
         ),
       },
       retry: {
         maxRetries: getNumber(
           getObject(rawConfig, "retry"),
           "maxRetries",
-          DEFAULTS.retry.maxRetries,
+          DEFAULTS.retry.maxRetries
         ),
         maxWaitTime: getNumber(
           getObject(rawConfig, "retry"),
           "maxWaitTime",
-          DEFAULTS.retry.maxWaitTime,
+          DEFAULTS.retry.maxWaitTime
         ),
-        interval: getNumber(
-          getObject(rawConfig, "retry"),
-          "interval",
-          DEFAULTS.retry.interval,
-        ),
+        interval: getNumber(getObject(rawConfig, "retry"), "interval", DEFAULTS.retry.interval),
       },
       logging: {
         level: getLogLevel(rawConfig, DEFAULTS.logging.level),
@@ -540,27 +467,15 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
   loadEnvFile(dir);
 
   const serviceConfig = loadJsonFile(join(dir, NEW_CONFIG_FILES.service));
-  const appsConfig = loadJsonFile(
-    join(dir, NEW_CONFIG_FILES.apps),
-  ) as AppsConfig | null;
+  const appsConfig = loadJsonFile(join(dir, NEW_CONFIG_FILES.apps)) as AppsConfig | null;
 
   return {
     apiKey: process.env[ENV_API_KEY] || getString(serviceConfig, "apiKey", ""),
-    baseUrl:
-      process.env[ENV_BASE_URL] ||
-      getString(serviceConfig, "baseUrl", DEFAULTS.baseUrl),
-    maxConcurrent: getNumber(
-      serviceConfig,
-      "maxConcurrent",
-      DEFAULTS.maxConcurrent,
-    ),
+    baseUrl: process.env[ENV_BASE_URL] || getString(serviceConfig, "baseUrl", DEFAULTS.baseUrl),
+    maxConcurrent: getNumber(serviceConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
     storage: {
       mode: getStorageMode(serviceConfig, DEFAULTS.storage.mode),
-      path: getString(
-        getObject(serviceConfig, "storage"),
-        "path",
-        DEFAULTS.storage.path,
-      ),
+      path: getString(getObject(serviceConfig, "storage"), "path", DEFAULTS.storage.path),
     },
     apps: mergeApps(appsConfig),
     appsConfig: appsConfig || { server: {}, user: {} },
@@ -569,25 +484,21 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
       defaultLanguage: getString(
         getObject(serviceConfig, "modelRules"),
         "defaultLanguage",
-        DEFAULTS.modelRules.defaultLanguage,
+        DEFAULTS.modelRules.defaultLanguage
       ),
     },
     retry: {
       maxRetries: getNumber(
         getObject(serviceConfig, "retry"),
         "maxRetries",
-        DEFAULTS.retry.maxRetries,
+        DEFAULTS.retry.maxRetries
       ),
       maxWaitTime: getNumber(
         getObject(serviceConfig, "retry"),
         "maxWaitTime",
-        DEFAULTS.retry.maxWaitTime,
+        DEFAULTS.retry.maxWaitTime
       ),
-      interval: getNumber(
-        getObject(serviceConfig, "retry"),
-        "interval",
-        DEFAULTS.retry.interval,
-      ),
+      interval: getNumber(getObject(serviceConfig, "retry"), "interval", DEFAULTS.retry.interval),
     },
     logging: {
       level: getLogLevel(serviceConfig, DEFAULTS.logging.level),
@@ -608,9 +519,7 @@ export function validateConfig(config: RunningHubConfig): {
 
   // 检查必填项
   if (!config.apiKey) {
-    errors.push(
-      "apiKey 是必填项！请通过环境变量 RUNNINGHUB_API_KEY 或配置文件提供",
-    );
+    errors.push("apiKey 是必填项！请通过环境变量 RUNNINGHUB_API_KEY 或配置文件提供");
   } else if (config.apiKey === "YOUR_API_KEY_HERE") {
     errors.push("请将 apiKey 替换为您的真实 API Key");
   }
@@ -620,7 +529,7 @@ export function validateConfig(config: RunningHubConfig): {
     warnings.push("baseUrl 未设置，使用默认值: auto");
   } else if (config.baseUrl !== "auto" && !isValidBaseUrl(config.baseUrl)) {
     warnings.push(
-      `baseUrl 可能不正确。请使用 auto（自动检测）、www.runninghub.cn（国内站）或 www.runninghub.ai（国际站）`,
+      `baseUrl 可能不正确。请使用 auto（自动检测）、www.runninghub.cn（国内站）或 www.runninghub.ai（国际站）`
     );
   }
 
@@ -636,9 +545,7 @@ export function validateConfig(config: RunningHubConfig): {
   // APP 配置检查（支持新旧格式）
   const apps = config.apps || mergeApps(config.appsConfig);
   if (Object.keys(apps).length === 0) {
-    warnings.push(
-      "未配置任何 APP，请运行 rhmcp --update-apps 或在 apps.json 中添加配置",
-    );
+    warnings.push("未配置任何 APP，请运行 rhmcp --update-apps 或在 apps.json 中添加配置");
   }
 
   return {

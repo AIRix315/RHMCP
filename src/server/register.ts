@@ -72,10 +72,10 @@ export function registerTools(ctx: ServerContext): void {
     async (args, _extra) => {
       const result = await uploadMediaTool.handler(
         args as z.infer<typeof uploadMediaTool.inputSchema>,
-        client,
+        client
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_get_app_info
@@ -89,10 +89,10 @@ export function registerTools(ctx: ServerContext): void {
       const result = await getAppInfoTool.handler(
         args as z.infer<typeof getAppInfoTool.inputSchema>,
         client,
-        config,
+        config
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_execute_app
@@ -106,10 +106,10 @@ export function registerTools(ctx: ServerContext): void {
       const result = await executeAppTool.handler(
         args as z.infer<typeof executeAppTool.inputSchema>,
         client,
-        config,
+        config
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_query_task
@@ -122,10 +122,10 @@ export function registerTools(ctx: ServerContext): void {
     async (args, _extra) => {
       const result = await queryTaskTool.handler(
         args as z.infer<typeof queryTaskTool.inputSchema>,
-        client,
+        client
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_add_app
@@ -139,10 +139,10 @@ export function registerTools(ctx: ServerContext): void {
       const result = await addAppTool.handler(
         args as z.infer<typeof addAppTool.inputSchema>,
         client,
-        configPath,
+        configPath
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_remove_app
@@ -155,10 +155,10 @@ export function registerTools(ctx: ServerContext): void {
     async (args, _extra) => {
       const result = await removeAppTool.handler(
         args as z.infer<typeof removeAppTool.inputSchema>,
-        configPath,
+        configPath
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_update_rules
@@ -171,10 +171,10 @@ export function registerTools(ctx: ServerContext): void {
     async (args, _extra) => {
       const result = await updateRulesTool.handler(
         args as z.infer<typeof updateRulesTool.inputSchema>,
-        config,
+        config
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_list_rules
@@ -187,10 +187,10 @@ export function registerTools(ctx: ServerContext): void {
     async (args, _extra) => {
       const result = await listRulesTool.handler(
         args as z.infer<typeof listRulesTool.inputSchema>,
-        config,
+        config
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 
   // rh_validate_config
@@ -202,10 +202,10 @@ export function registerTools(ctx: ServerContext): void {
     },
     async (args, _extra) => {
       const result = await validateConfigTool.handler(
-        args as z.infer<typeof validateConfigTool.inputSchema>,
+        args as z.infer<typeof validateConfigTool.inputSchema>
       );
       return { content: [{ type: "text", text: JSON.stringify(result) }] };
-    },
+    }
   );
 }
 
@@ -221,14 +221,12 @@ export function registerResources(ctx: ServerContext): void {
     "rh://apps",
     { description: "列出所有配置的APP", mimeType: "application/json" },
     async (uri: URL) => {
-      const apps = Object.entries(getMergedApps(config)).map(
-        ([alias, app]) => ({
-          alias,
-          appId: app.appId,
-          category: app.category,
-          description: app.description,
-        }),
-      );
+      const apps = Object.entries(getMergedApps(config)).map(([alias, app]) => ({
+        alias,
+        appId: app.appId,
+        category: app.category,
+        description: app.description,
+      }));
       return {
         contents: [
           {
@@ -238,7 +236,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 
   // rh://apps/{alias} - APP详情
@@ -247,10 +245,7 @@ export function registerResources(ctx: ServerContext): void {
     new ResourceTemplate("rh://apps/{alias}", { list: undefined }),
     { description: "查看指定APP的详细配置", mimeType: "application/json" },
     async (uri: URL, variables: Record<string, string | string[]>) => {
-      const alias =
-        typeof variables.alias === "string"
-          ? variables.alias
-          : variables.alias?.[0];
+      const alias = typeof variables.alias === "string" ? variables.alias : variables.alias?.[0];
       if (!alias) throw new Error("缺少 alias 参数");
 
       const apps = getMergedApps(config);
@@ -270,7 +265,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 
   // rh://tasks/{taskId} - 任务状态
@@ -280,9 +275,7 @@ export function registerResources(ctx: ServerContext): void {
     { description: "查询指定任务的状态和结果", mimeType: "application/json" },
     async (uri: URL, variables: Record<string, string | string[]>) => {
       const taskId =
-        typeof variables.taskId === "string"
-          ? variables.taskId
-          : variables.taskId?.[0];
+        typeof variables.taskId === "string" ? variables.taskId : variables.taskId?.[0];
       if (!taskId) throw new Error("缺少 taskId 参数");
 
       const result = await client.queryTask(taskId);
@@ -295,7 +288,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 
   // rh://tasks/history - 任务历史
@@ -314,7 +307,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 
   // rh://rules - 模型规则列表
@@ -333,7 +326,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 
   // rh://config - 当前配置
@@ -358,7 +351,7 @@ export function registerResources(ctx: ServerContext): void {
           },
         ],
       };
-    },
+    }
   );
 }
 
@@ -376,6 +369,6 @@ export function createServer(): McpServer {
         tools: {},
         resources: {},
       },
-    },
+    }
   );
 }

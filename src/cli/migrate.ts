@@ -31,9 +31,7 @@ export async function migrate(oldConfigPath: string): Promise<void> {
   console.log("[RHMCP] 检测到旧版配置格式，正在迁移...");
   console.log(`[RHMCP] 源文件: ${oldConfigPath}`);
 
-  const rawConfig = JSON.parse(
-    readFileSync(oldConfigPath, "utf-8"),
-  ) as LegacyConfig;
+  const rawConfig = JSON.parse(readFileSync(oldConfigPath, "utf-8")) as LegacyConfig;
   const configDir = dirname(oldConfigPath);
 
   // 1. 创建 .env 文件
@@ -74,15 +72,9 @@ RUNNINGHUB_API_KEY=${rawConfig.apiKey}
   };
 
   // 如果有 modelRules，添加到 user 的注释
-  if (
-    rawConfig.modelRules &&
-    Object.keys(rawConfig.modelRules.rules || {}).length > 0
-  ) {
-    (appsConfig.user as Record<string, unknown>)._modelRules =
-      rawConfig.modelRules;
-    console.log(
-      "[RHMCP] 注意: modelRules 已迁移到 apps.json (user._modelRules)",
-    );
+  if (rawConfig.modelRules && Object.keys(rawConfig.modelRules.rules || {}).length > 0) {
+    (appsConfig.user as Record<string, unknown>)._modelRules = rawConfig.modelRules;
+    console.log("[RHMCP] 注意: modelRules 已迁移到 apps.json (user._modelRules)");
   }
 
   const appsPath = join(configDir, "apps.json");

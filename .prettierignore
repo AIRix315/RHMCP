@@ -1,0 +1,7 @@
+dist/
+node_modules/
+output/
+coverage/
+*.min.js
+*.min.mjs
+package-lock.json

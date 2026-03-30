@@ -11,8 +11,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { AppsConfig, AppConfig } from "../types.js";
 
-const APPS_URL =
-  "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json";
+const APPS_URL = "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json";
 
 export async function updateApps(appsFile: string): Promise<void> {
   console.log("[RHMCP] 正在更新 APP 列表...");
@@ -20,7 +19,7 @@ export async function updateApps(appsFile: string): Promise<void> {
   console.log(`[RHMCP] 目标: ${appsFile}`);
 
   // 1. 获取当前 APP 配置
-  let currentApps: AppsConfig = { server: {}, user: {} };
+  const currentApps: AppsConfig = { server: {}, user: {} };
   const absolutePath = resolve(appsFile);
 
   if (existsSync(absolutePath)) {
@@ -50,20 +49,15 @@ export async function updateApps(appsFile: string): Promise<void> {
     };
 
     // 4. 更新时间戳和来源（作为元数据字段）
-    (updatedApps.server as Record<string, unknown>)._updated =
-      new Date().toISOString();
+    (updatedApps.server as Record<string, unknown>)._updated = new Date().toISOString();
     (updatedApps.server as Record<string, unknown>)._source = APPS_URL;
 
     // 5. 写入文件
     writeFileSync(absolutePath, JSON.stringify(updatedApps, null, 2));
 
     // 统计
-    const serverCount = Object.keys(serverApps).filter(
-      (k) => !k.startsWith("_"),
-    ).length;
-    const userCount = Object.keys(updatedApps.user).filter(
-      (k) => !k.startsWith("_"),
-    ).length;
+    const serverCount = Object.keys(serverApps).filter((k) => !k.startsWith("_")).length;
+    const userCount = Object.keys(updatedApps.user).filter((k) => !k.startsWith("_")).length;
 
     console.log("[RHMCP] APP 列表已更新");
     console.log(`[RHMCP] 服务端 APP 数量: ${serverCount}`);
@@ -78,9 +72,7 @@ export async function updateApps(appsFile: string): Promise<void> {
 /**
  * 合并 server 和 user APP 配置
  */
-export function mergeApps(
-  appsConfig: AppsConfig | undefined,
-): Record<string, AppConfig> {
+export function mergeApps(appsConfig: AppsConfig | undefined): Record<string, AppConfig> {
   if (!appsConfig) return {};
 
   const merged: Record<string, AppConfig> = {};

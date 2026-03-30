@@ -7,11 +7,7 @@ import type { RunningHubConfig } from "../types.js";
 
 const ListRulesSchema = z.object({
   category: z.enum(["image", "audio", "video"]).optional().describe("筛选类别"),
-  source: z
-    .enum(["local", "cache"])
-    .optional()
-    .default("local")
-    .describe("规则来源"),
+  source: z.enum(["local", "cache"]).optional().default("local").describe("规则来源"),
 });
 
 // 获取本地 rules 目录
@@ -25,10 +21,7 @@ export const listRulesTool = {
   description: "列出所有可用的模型规则（支持本地和缓存来源）",
   inputSchema: ListRulesSchema,
 
-  async handler(
-    args: z.infer<typeof ListRulesSchema>,
-    config: RunningHubConfig,
-  ) {
+  async handler(args: z.infer<typeof ListRulesSchema>, config: RunningHubConfig) {
     // 确定规则目录
     let rulesDir: string;
     if (args.source === "cache") {

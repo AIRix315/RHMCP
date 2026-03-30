@@ -73,15 +73,7 @@ export interface AppConfig {
 export interface InputParam {
   nodeId: string;
   fieldName: string;
-  type:
-    | "STRING"
-    | "INT"
-    | "FLOAT"
-    | "IMAGE"
-    | "AUDIO"
-    | "VIDEO"
-    | "LIST"
-    | "SWITCH";
+  type: "STRING" | "INT" | "FLOAT" | "IMAGE" | "AUDIO" | "VIDEO" | "LIST" | "SWITCH";
   required: boolean;
   description?: string;
   default?: string | number;

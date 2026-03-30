@@ -7,12 +7,19 @@ dist/
 # Output files (generated content)
 output/
 
+# Test output
+coverage/
+test-temp-*/
+test-output/
+
 # Logs
 *.log
 
 # User configuration (contains API key)
 runninghub-mcp-config.json
 rhmcp-config.json
+service.json
+apps.json
 
 # But allow template/example files
 !*.template.json

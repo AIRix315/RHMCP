@@ -5,10 +5,7 @@ import { AppConfig, InputParam } from "../types.js";
 const AddAppSchema = z.object({
   appId: z.string().describe("APP ID"),
   alias: z.string().describe("APP别名"),
-  modelFamily: z
-    .string()
-    .optional()
-    .describe("模型系列（可选，用于自动导入规则）"),
+  modelFamily: z.string().optional().describe("模型系列（可选，用于自动导入规则）"),
   category: z.enum(["image", "audio", "video"]).describe("APP类别"),
 });
 
@@ -20,7 +17,7 @@ export const addAppTool = {
   async handler(
     args: z.infer<typeof AddAppSchema>,
     client: RunningHubClient,
-    configPathOrConfig?: string | { apps: Record<string, AppConfig> },
+    configPathOrConfig?: string | { apps: Record<string, AppConfig> }
   ) {
     // 1. 获取APP配置
     const result = await client.getAppInfo(args.appId);

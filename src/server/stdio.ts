@@ -10,8 +10,7 @@ import { validateConfig } from "../config/validator.js";
 import { createServer, registerTools, registerResources } from "./register.js";
 
 // CONFIG_PATH 用于传递配置目录，默认为 undefined（自动检测）
-const CONFIG_PATH =
-  process.env.CONFIG_PATH || process.env.RHMCP_CONFIG || undefined;
+const CONFIG_PATH = process.env.CONFIG_PATH || process.env.RHMCP_CONFIG || undefined;
 
 export async function startStdioServer(): Promise<void> {
   // 1. 加载配置（异步）

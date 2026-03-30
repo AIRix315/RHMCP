@@ -15,10 +15,7 @@ import { StorageConfig, StorageMode } from "../types.js";
 /**
  * 下载文件到本地
  */
-export async function downloadToFile(
-  url: string,
-  localPath: string,
-): Promise<string> {
+export async function downloadToFile(url: string, localPath: string): Promise<string> {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`下载失败: ${response.status} ${response.statusText}`);
@@ -48,7 +45,7 @@ export async function processOutput(
   fileUrl: string,
   fileId: string,
   config: StorageConfig,
-  taskId?: string,
+  taskId?: string
 ): Promise<{
   originalUrl: string;
   localPath?: string;
@@ -77,9 +74,7 @@ export async function processOutput(
       const localDir = config.path || "./output";
       const timestamp = Date.now();
       const ext = getFileExtension(fileUrl);
-      const fileName = taskId
-        ? `${taskId}_${fileId}${ext}`
-        : `${timestamp}_${fileId}${ext}`;
+      const fileName = taskId ? `${taskId}_${fileId}${ext}` : `${timestamp}_${fileId}${ext}`;
       const localPath = join(localDir, fileName);
 
       await downloadToFile(fileUrl, localPath);
@@ -90,23 +85,13 @@ export async function processOutput(
       // 上传到云存储
       if (!config.cloudConfig) {
         console.warn("cloudConfig未配置，fallback到local模式");
-        return processOutput(
-          fileUrl,
-          fileId,
-          { ...config, mode: "local" },
-          taskId,
-        );
+        return processOutput(fileUrl, fileId, { ...config, mode: "local" }, taskId);
       }
 
       // TODO: 实现云存储上传
       // 目前fallback到local
       console.warn("云存储上传尚未实现，fallback到local模式");
-      return processOutput(
-        fileUrl,
-        fileId,
-        { ...config, mode: "local" },
-        taskId,
-      );
+      return processOutput(fileUrl, fileId, { ...config, mode: "local" }, taskId);
 
     case "auto":
       // 自动判断：暂时按local处理

@@ -20,9 +20,7 @@ const SERVICE_CONSTRAINTS: Record<string, Constraint> = {
 /**
  * 合并多层约束（优先级：app > model > service）
  */
-export function mergeConstraints(
-  constraints: Constraints,
-): Record<string, Constraint> {
+export function mergeConstraints(constraints: Constraints): Record<string, Constraint> {
   const result: Record<string, Constraint> = { ...SERVICE_CONSTRAINTS };
 
   // 合并模型级约束
@@ -48,7 +46,7 @@ export function mergeConstraints(
 export function validateParams(
   params: Record<string, any>,
   inputs: Record<string, InputParam>,
-  constraints: Record<string, Constraint>,
+  constraints: Record<string, Constraint>
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -74,14 +72,10 @@ export function validateParams(
           errors.push(`参数 "${paramName}" 必须是数字`);
         } else {
           if (constraint.min !== undefined && value < constraint.min) {
-            errors.push(
-              `参数 "${paramName}"=${value} 小于最小值 ${constraint.min}`,
-            );
+            errors.push(`参数 "${paramName}"=${value} 小于最小值 ${constraint.min}`);
           }
           if (constraint.max !== undefined && value > constraint.max) {
-            errors.push(
-              `参数 "${paramName}"=${value} 大于最大值 ${constraint.max}`,
-            );
+            errors.push(`参数 "${paramName}"=${value} 大于最大值 ${constraint.max}`);
           }
         }
         break;
@@ -89,13 +83,8 @@ export function validateParams(
       case "STRING":
         if (typeof value !== "string") {
           errors.push(`参数 "${paramName}" 必须是字符串`);
-        } else if (
-          constraint.maxLength &&
-          value.length > constraint.maxLength
-        ) {
-          errors.push(
-            `参数 "${paramName}" 长度超过限制 ${constraint.maxLength}`,
-          );
+        } else if (constraint.maxLength && value.length > constraint.maxLength) {
+          errors.push(`参数 "${paramName}" 长度超过限制 ${constraint.maxLength}`);
         }
         // 语言验证
         if (constraint.languages && constraint.languages.length > 0) {
@@ -105,10 +94,7 @@ export function validateParams(
         break;
 
       case "LIST":
-        if (
-          paramConfig.options &&
-          !paramConfig.options.includes(String(value))
-        ) {
+        if (paramConfig.options && !paramConfig.options.includes(String(value))) {
           errors.push(`参数 "${paramName}"=${value} 不在有效选项中`);
         }
         break;

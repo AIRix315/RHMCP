@@ -10,10 +10,7 @@ export const queryTaskTool = {
   description: "查询任务状态和结果",
   inputSchema: QueryTaskSchema,
 
-  async handler(
-    args: z.infer<typeof QueryTaskSchema>,
-    client: RunningHubClient,
-  ) {
+  async handler(args: z.infer<typeof QueryTaskSchema>, client: RunningHubClient) {
     const result = await client.queryTask(args.taskId);
 
     // 状态码映射

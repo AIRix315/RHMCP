@@ -48,7 +48,7 @@ export const getAppInfoTool = {
   async handler(
     args: z.infer<typeof GetAppInfoSchema>,
     client: RunningHubClient,
-    config: RunningHubConfig,
+    config: RunningHubConfig
   ) {
     const apps = getMergedApps(config);
 

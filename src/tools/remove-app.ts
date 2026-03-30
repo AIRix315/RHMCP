@@ -15,7 +15,7 @@ export const removeAppTool = {
     // 1. 检查配置路径
     if (!configPath) {
       throw new Error(
-        "配置文件路径未设置，无法删除 APP。请设置 CONFIG_PATH 环境变量或使用新配置格式。",
+        "配置文件路径未设置，无法删除 APP。请设置 CONFIG_PATH 环境变量或使用新配置格式。"
       );
     }
 
