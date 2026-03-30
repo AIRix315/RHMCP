@@ -1,5 +1,12 @@
 # OpenClaw + RHMCP 测试清单
 
+> ⚠️ **内部文档 - 不随生产发布**
+>
+> 此文档仅供开发者在集成测试阶段使用，用于验证 MCP 集成是否正常工作。
+> 测试完成后无需保留。
+
+---
+
 > 请 OpenClaw Agent 按顺序执行以下测试，并记录每项结果
 
 ---
@@ -7,6 +14,7 @@
 ## 测试前准备
 
 确保已完成：
+
 - [ ] RHMCP 已构建（`npm run build`）
 - [ ] `rhmcp-config.json` 已创建
 - [ ] OpenClaw 配置已添加 MCP Server
@@ -23,10 +31,12 @@
 **操作**：重启 OpenClaw，查看日志或运行状态
 
 **预期**：
+
 - OpenClaw 正常启动
 - 日志中无 MCP Server 错误
 
 **结果记录**：
+
 ```
 [ ] 通过
 [ ] 失败 - 错误信息：
@@ -41,6 +51,7 @@
 **操作**：让 Agent 列出可用的 MCP 工具
 
 **预期**：看到以下工具：
+
 - `rh_list_apps`
 - `rh_get_app_info`
 - `rh_execute_app`
@@ -48,6 +59,7 @@
 - `rh_upload_media`
 
 **结果记录**：
+
 ```
 [ ] 通过 - 看到的工具：
 [ ] 失败 - 缺少的工具：
@@ -62,6 +74,7 @@
 **操作**：调用 `rh_list_apps`
 
 **Agent 调用**：
+
 ```json
 rh_list_apps({})
 ```
@@ -69,6 +82,7 @@ rh_list_apps({})
 **预期**：返回 APP 列表，包含 `qwen-text-to-image` 和 `qwen-image-to-image`
 
 **结果记录**：
+
 ```
 [ ] 通过 - 返回内容：
 [ ] 失败 - 错误信息：
@@ -83,6 +97,7 @@ rh_list_apps({})
 **操作**：调用 `rh_get_app_info` 获取 APP 详情
 
 **Agent 调用**：
+
 ```json
 rh_get_app_info({ "alias": "qwen-text-to-image" })
 ```
@@ -90,6 +105,7 @@ rh_get_app_info({ "alias": "qwen-text-to-image" })
 **预期**：返回 APP 详细信息，包含 `inputs` 字段
 
 **结果记录**：
+
 ```
 [ ] 通过 - 返回内容：
 [ ] 失败 - 错误信息：
@@ -104,6 +120,7 @@ rh_get_app_info({ "alias": "qwen-text-to-image" })
 **操作**：调用 `rh_execute_app` 生成图片
 
 **Agent 调用**：
+
 ```json
 rh_execute_app({
   "alias": "qwen-text-to-image",
@@ -114,10 +131,12 @@ rh_execute_app({
 ```
 
 **预期**：
+
 - 返回 `status: "SUCCESS"`
 - 返回 `outputs` 数组，包含 `originalUrl`
 
 **结果记录**：
+
 ```
 [ ] 通过 - taskId: , URL:
 [ ] 失败 - 错误信息：
@@ -130,10 +149,12 @@ rh_execute_app({
 **目的**：测试 `rh_execute_app` 异步执行
 
 **操作**：
+
 1. 以异步模式提交任务
 2. 使用 `rh_query_task` 查询状态
 
 **Agent 调用 1**：
+
 ```json
 rh_execute_app({
   "alias": "qwen-text-to-image",
@@ -145,6 +166,7 @@ rh_execute_app({
 **预期 1**：返回 `{ "taskId": "xxx", "status": "PENDING" }`
 
 **Agent 调用 2**（等待几秒后）：
+
 ```json
 rh_query_task({ "taskId": "上一步返回的taskId" })
 ```
@@ -152,6 +174,7 @@ rh_query_task({ "taskId": "上一步返回的taskId" })
 **预期 2**：返回 `{ "status": "SUCCESS", "outputs": [...] }`
 
 **结果记录**：
+
 ```
 [ ] 通过
 [ ] 失败 - 步骤：
@@ -168,6 +191,7 @@ rh_query_task({ "taskId": "上一步返回的taskId" })
 **操作**：使用无效的 API Key 或错误的 APP ID
 
 **Agent 调用**：
+
 ```json
 rh_execute_app({
   "alias": "non-existent-app",
@@ -178,6 +202,7 @@ rh_execute_app({
 **预期**：返回明确的错误信息，不崩溃
 
 **结果记录**：
+
 ```
 [ ] 通过 - 错误信息：
 [ ] 失败 - 实际行为：
@@ -192,11 +217,13 @@ rh_execute_app({
 **操作**：检查配置是否正确加载
 
 **验证方法**：
+
 - 修改 `rhmcp-config.json` 中的 `baseUrl` 为 `www.runninghub.ai`
 - 执行 T3 或 T4
 - 检查请求是否发送到正确的域名
 
 **结果记录**：
+
 ```
 [ ] 通过
 [ ] 失败 - 说明：
@@ -211,6 +238,7 @@ rh_execute_app({
 **操作**：使用中文生成图片
 
 **Agent 调用**：
+
 ```json
 rh_execute_app({
   "alias": "qwen-text-to-image",
@@ -221,6 +249,7 @@ rh_execute_app({
 **预期**：成功生成图片
 
 **结果记录**：
+
 ```
 [ ] 通过 - URL:
 [ ] 失败 - 错误：
@@ -237,6 +266,7 @@ rh_execute_app({
 **预期**：3 次都成功返回
 
 **结果记录**：
+
 ```
 [ ] 通过 - 3次成功
 [ ] 失败 - 成功次数：，失败信息：
@@ -251,6 +281,7 @@ rh_execute_app({
 **前提**：需要先上传图片或提供图片 URL
 
 **Agent 调用**：
+
 ```json
 rh_execute_app({
   "alias": "qwen-image-to-image",
@@ -262,6 +293,7 @@ rh_execute_app({
 ```
 
 **结果记录**：
+
 ```
 [ ] 通过
 [ ] 跳过 - 原因：
@@ -276,20 +308,20 @@ rh_execute_app({
 
 ### 环境信息
 
-| 项目 | 值 |
-|------|-----|
-| 操作系统 | Windows / Linux / Mac |
-| Node.js 版本 | |
-| OpenClaw 版本 | |
-| RHMCP 路径 | |
+| 项目          | 值                    |
+| ------------- | --------------------- |
+| 操作系统      | Windows / Linux / Mac |
+| Node.js 版本  |                       |
+| OpenClaw 版本 |                       |
+| RHMCP 路径    |                       |
 
 ### 测试统计
 
 | 状态 | 数量 |
-|------|------|
-| 通过 | |
-| 失败 | |
-| 跳过 | |
+| ---- | ---- |
+| 通过 |      |
+| 失败 |      |
+| 跳过 |      |
 
 ### 问题详情
 
@@ -307,5 +339,6 @@ rh_execute_app({
 ## 反馈地址
 
 请将测试结果反馈：
+
 - GitHub Issue: https://github.com/AIRix315/RHMCP/issues
 - 或直接在此文档中填写结果

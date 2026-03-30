@@ -1,63 +1,55 @@
-# OpenClaw + RHMCP 使用指南
+# OpenClaw + RHMCP 快速指南
 
-> 本指南面向 OpenClaw Agent，说明如何配置和使用 RHMCP 访问 RunningHub 平台。
+> 让 OpenClaw Agent 能够调用 RunningHub AI 平台的生图、视频生成等功能。
 
 ---
 
-## 一、快速配置
+## 一、部署 RHMCP
 
-### 1.1 前置条件
-
-- Node.js 18+ 
-- RunningHub API Key（从 https://www.runninghub.cn 获取）
-- OpenClaw 已安装
-
-### 1.2 安装 RHMCP
+### 1.1 克隆并构建
 
 ```bash
-# 克隆并构建
 git clone https://github.com/AIRix315/RHMCP.git
 cd RHMCP
 npm install
 npm run build
-
-# 记录完整路径（后续配置需要）
-# Windows: cd → 显示路径如 E:\Projects\RHMCP
-# Linux/Mac: pwd → 显示路径如 /home/user/RHMCP
 ```
 
-### 1.3 创建配置文件
+### 1.2 创建配置文件
 
-在 RHMCP 目录创建 `rhmcp-config.json`：
+**创建 `.env`**（存放 API Key）：
+
+```bash
+echo "RUNNINGHUB_API_KEY=your_api_key_here" > .env
+```
+
+**创建 `service.json`**：
 
 ```json
 {
-  "apiKey": "YOUR_API_KEY_HERE",
-  "baseUrl": "www.runninghub.cn",
+  "baseUrl": "auto",
   "maxConcurrent": 1,
-  "storage": {
-    "mode": "none"
-  },
-  "apps": {
-    "qwen-text-to-image": {
-      "appId": "2037760725296357377",
-      "alias": "qwen-text-to-image",
-      "category": "image",
-      "description": "Qwen文生图"
-    },
-    "qwen-image-to-image": {
-      "appId": "2037822548796252162",
-      "alias": "qwen-image-to-image",
-      "category": "image",
-      "description": "Qwen图生图"
-    }
-  }
+  "storage": { "mode": "none" }
 }
 ```
 
-### 1.4 配置 OpenClaw
+> `baseUrl` 选择：`auto`（自动检测）、`www.runninghub.cn`（国内站）、`www.runninghub.ai`（国际站）
 
-编辑 `~/.openclaw/openclaw.json`，添加 MCP Server：
+**创建 `apps.json`**（运行 `rhmcp --update-apps` 自动填充官方 APP）
+
+### 1.3 验证安装
+
+```bash
+node dist/server/index.js --stdio
+```
+
+正常启动无报错即成功。
+
+---
+
+## 二、配置 OpenClaw
+
+编辑 `~/.openclaw/openclaw.json`（Windows: `%USERPROFILE%\.openclaw\openclaw.json`）：
 
 ```json
 {
@@ -65,12 +57,9 @@ npm run build
     "servers": {
       "rhmcp": {
         "command": "node",
-        "args": [
-          "E:/Projects/RHMCP/dist/server/index.js",
-          "--stdio"
-        ],
+        "args": ["E:/Projects/RHMCP/dist/server/index.js", "--stdio"],
         "env": {
-          "CONFIG_PATH": "E:/Projects/RHMCP/rhmcp-config.json"
+          "RHMCP_CONFIG": "E:/Projects/RHMCP"
         }
       }
     }
@@ -78,45 +67,34 @@ npm run build
 }
 ```
 
-**注意**：
-- 路径必须使用**绝对路径**
-- Windows 路径用 `/` 或 `\\`（不要用单个 `\`）
-- 重启 OpenClaw 使配置生效
+**关键点**：
+
+- `args` 使用绝对路径
+- `RHMCP_CONFIG` 指向配置**目录**（非文件）
+- Windows 路径用 `/` 或 `\\`
+
+重启 OpenClaw 使配置生效。
 
 ---
 
-## 二、可用工具
+## 三、使用工具
 
-| 工具 | 用途 |
-|------|------|
-| `rh_list_apps` | 列出所有已配置的 APP |
-| `rh_get_app_info` | 获取 APP 详细信息 |
-| `rh_execute_app` | 执行 APP 生成内容 |
-| `rh_query_task` | 查询任务状态 |
-| `rh_upload_media` | 上传媒体文件 |
+启动后，RHMCP 工具会自动注册到 OpenClaw。
 
----
+### 可用工具
 
-## 三、使用示例
+| 工具              | 用途               |
+| ----------------- | ------------------ |
+| `rh_upload_media` | 上传图片/视频/音频 |
+| `rh_get_app_info` | 获取 APP 参数配置  |
+| `rh_execute_app`  | 执行 APP 生成内容  |
+| `rh_query_task`   | 查询任务状态       |
+| `rh_add_app`      | 添加自定义 APP     |
+| `rh_remove_app`   | 移除 APP           |
+| `rh_update_rules` | 更新模型规则       |
+| `rh_list_rules`   | 列出可用规则       |
 
-### 3.1 列出可用 APP
-
-```
-用户: 查看可用的 RunningHub APP
-
-Agent 调用:
-rh_list_apps({})
-
-返回:
-{
-  "apps": [
-    { "alias": "qwen-text-to-image", "category": "image", "description": "Qwen文生图" },
-    { "alias": "qwen-image-to-image", "category": "image", "description": "Qwen图生图" }
-  ]
-}
-```
-
-### 3.2 文生图
+### 示例：文生图
 
 ```
 用户: 生成一张可爱的猫咪图片
@@ -124,132 +102,36 @@ rh_list_apps({})
 Agent 调用:
 rh_execute_app({
   "alias": "qwen-text-to-image",
-  "params": {
-    "text": "一只可爱的猫咪，卡通风格"
-  }
+  "params": { "text": "一只可爱的猫咪，卡通风格" }
 })
 
 返回:
 {
-  "taskId": "123456",
+  "taskId": "xxx",
   "status": "SUCCESS",
-  "outputs": [
-    {
-      "originalUrl": "https://www.runninghub.cn/xxx/image.png"
-    }
-  ]
+  "outputs": [{ "originalUrl": "https://..." }]
 }
 ```
 
-### 3.3 查询任务状态（异步模式）
+### 示例：异步模式
+
+长时间任务使用异步模式：
 
 ```
-Agent 调用:
 rh_execute_app({
   "alias": "qwen-text-to-image",
   "params": { "text": "风景画" },
   "mode": "async"
 })
 
-返回:
-{
-  "taskId": "123456",
-  "status": "PENDING"
-}
-
-# 稍后查询
-Agent 调用:
-rh_query_task({ "taskId": "123456" })
+# 返回 taskId，稍后查询
+rh_query_task({ "taskId": "xxx" })
 ```
 
 ---
 
-## 四、常见问题
+## 四、获取帮助
 
-### Q1: MCP Server 不启动
-
-**症状**：调用工具无响应或报错 "server not found"
-
-**检查**：
-1. 路径是否为绝对路径
-2. Node.js 版本是否 18+
-3. `npm run build` 是否成功
-
-**解决**：
-```bash
-# 验证 RHMCP 可独立运行
-cd E:\Projects\RHMCP
-node dist/server/index.js --stdio
-
-# 应输出 MCP 协议握手信息
-```
-
-### Q2: API Key 无效
-
-**症状**：返回 "apiKey is required" 或 401 错误
-
-**检查**：
-1. `rhmcp-config.json` 中 `apiKey` 是否正确
-2. API Key 是否已激活
-
-**解决**：
-- 登录 RunningHub 控制台确认 API Key 状态
-- 确认 baseUrl 正确（国内站 `www.runninghub.cn`，国际站 `www.runninghub.ai`）
-
-### Q3: 任务超时
-
-**症状**：返回 "任务超时"
-
-**解决**：
-- 部分任务执行时间较长，使用 `mode: "async"` 异步模式
-- 在配置中增加 `retry.maxWaitTime`
-
-### Q4: 环境变量未生效
-
-**症状**：配置了 `CONFIG_PATH` 但不生效
-
-**检查**：
-```json
-{
-  "mcp": {
-    "servers": {
-      "rhmcp": {
-        "env": {
-          "CONFIG_PATH": "E:/Projects/RHMCP/rhmcp-config.json"  // 必须绝对路径
-        }
-      }
-    }
-  }
-}
-```
-
-### Q5: 中文乱码
-
-**解决**：确保配置文件和终端使用 UTF-8 编码
-
----
-
-## 五、配置参考
-
-### baseUrl 选择
-
-| 域名 | 适用场景 |
-|------|----------|
-| `www.runninghub.cn` | 国内站，服务器在中国 |
-| `www.runninghub.ai` | 国际站，服务器在海外 |
-
-### storage 模式
-
-| 模式 | 说明 | 适用场景 |
-|------|------|----------|
-| `none` | 返回 RunningHub URL | OpenClaw 默认推荐 |
-| `local` | 下载到本地 | 需要保存文件 |
-| `auto` | Agent 自动判断 | 复杂场景 |
-
----
-
-## 六、获取帮助
-
-- RHMCP 仓库：https://github.com/AIRix315/RHMCP
-- 问题反馈：GitHub Issues
-- RunningHub 平台：https://www.runninghub.cn
+- **RHMCP 仓库**: https://github.com/AIRix315/RHMCP
+- **常见问题**: [FAQ.md](./FAQ.md)
+- **RunningHub 平台**: https://www.runninghub.cn

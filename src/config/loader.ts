@@ -3,7 +3,7 @@
  * 支持新旧两种配置格式，包含向后兼容
  */
 
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 import { config as dotenvConfig } from "dotenv";
 import {
@@ -289,8 +289,30 @@ export function mergeApps(appsConfig: AppsConfig | undefined | null): Record<str
  * 查找旧格式配置文件
  */
 function findLegacyConfig(configPath?: string): string | null {
+  // 如果指定了配置路径，先检查是否是目录
   if (configPath && existsSync(configPath)) {
-    return configPath;
+    try {
+      const stats = statSync(configPath);
+      if (stats.isDirectory()) {
+        // 是目录，检查目录内是否有配置文件
+        const servicePath = join(configPath, NEW_CONFIG_FILES.service);
+        if (existsSync(servicePath)) {
+          return null; // 新格式存在，返回 null
+        }
+        // 检查旧格式
+        const names = [DEFAULT_CONFIG_NAME, LEGACY_CONFIG_NAME];
+        for (const name of names) {
+          const path = join(configPath, name);
+          if (existsSync(path)) return path;
+        }
+        return null; // 目录中无配置文件
+      }
+      // 是文件，直接返回
+      return configPath;
+    } catch {
+      // stat 失败，忽略并继续
+      return null;
+    }
   }
 
   const cwd = process.cwd();
