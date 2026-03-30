@@ -53,33 +53,18 @@ cd RHMCP
 npm install
 npm run build
 
-# 2. 创建配置文件
-cat > rhmcp-config.json << 'EOF'
-{
-  "apiKey": "YOUR_API_KEY_HERE",
-  "baseUrl": "www.runninghub.cn",
-  "maxConcurrent": 1,
-  "storage": {
-    "mode": "local",
-    "path": "./output"
-  },
-  "apps": {
-    "qwen-text-to-image": {
-      "appId": "2037760725296357377",
-      "alias": "qwen-text-to-image",
-      "category": "image",
-      "description": "Qwen文生图"
-    }
-  },
-  "modelRules": { "rules": {}, "defaultLanguage": "zh" },
-  "retry": { "maxRetries": 3, "maxWaitTime": 600, "interval": 5 },
-  "logging": { "level": "info" }
-}
-EOF
+# 2. 创建配置文件（新格式）
+cp service.json.example service.json
+cp apps.json.example apps.json
 
-# 3. 运行测试
+# 3. 设置 API Key
+echo "RUNNINGHUB_API_KEY=your_api_key_here" > .env
+
+# 4. 运行测试
 node test-api.mjs
 ```
+
+> 💡 **提示**: 也支持旧配置格式 `rhmcp-config.json`，会自动迁移。
 
 ### 获取 API Key
 
@@ -88,6 +73,8 @@ node test-api.mjs
 3. 创建并复制 API Key
 
 ### 共享测试 APP
+
+运行 `rhmcp --update-apps` 可自动获取最新官方 APP 列表：
 
 | APP ID                | 别名                  | 类型     | 说明           |
 | --------------------- | --------------------- | -------- | -------------- |
@@ -98,39 +85,61 @@ node test-api.mjs
 
 ## 配置说明
 
-### 完整配置示例
+### 新配置格式（推荐）
 
+配置分为三个文件：
+
+**1. service.json** - 服务配置
 ```json
 {
-  "apiKey": "YOUR_API_KEY_HERE",
-  "baseUrl": "www.runninghub.cn",
+  "baseUrl": "auto",
   "maxConcurrent": 1,
-  "storage": {
-    "mode": "local",
-    "path": "./output",
-    "cloudConfig": {
-      "provider": "baidu",
-      "accessKey": "YOUR_ACCESS_KEY",
-      "secretKey": "YOUR_SECRET_KEY",
-      "bucket": "YOUR_BUCKET"
-    }
-  },
-  "apps": { ... },
-  "modelRules": { ... },
+  "storage": { "mode": "local", "path": "./output" },
   "retry": { "maxRetries": 3, "maxWaitTime": 600, "interval": 5 },
-  "logging": { "level": "info" }
+  "logging": { "level": "info" },
+  "modelRules": { "rules": {}, "defaultLanguage": "zh" }
 }
+```
+
+**2. apps.json** - APP 配置
+```json
+{
+  "server": { "_comment": "官方共享APP，由 --update-apps 更新" },
+  "user": {
+    "my-app": {
+      "appId": "YOUR_APP_ID",
+      "alias": "my-app",
+      "category": "image",
+      "description": "我的APP"
+    }
+  }
+}
+```
+
+**3. .env** - 敏感配置
+```
+RUNNINGHUB_API_KEY=your_api_key_here
+RUNNINGHUB_BASE_URL=www.runninghub.cn  # 可选，优先级高于 service.json
+```
+
+### 旧配置格式（向后兼容）
+
+仍支持 `rhmcp-config.json` 单文件格式，会自动迁移。
+
+### 配置优先级
+
+```
+环境变量 > service.json > 默认值
 ```
 
 ### 配置字段说明
 
-| 字段           | 必填 | 说明                             |
-| -------------- | ---- | -------------------------------- |
-| `apiKey`       | ✅   | RunningHub API Key               |
-| `baseUrl`      | ✅   | API 域名（cn=国内站，ai=国际站） |
-| `storage.mode` | ❌   | 存储模式，默认 `local`           |
-| `storage.path` | ❌   | 本地存储路径，默认 `./output`    |
-| `apps`         | ❌   | APP 配置，支持多个               |
+| 字段           | 必填 | 说明                                        |
+| -------------- | ---- | ------------------------------------------- |
+| `baseUrl`      | ✅   | API 域名，支持 `auto`（自动检测）、`www.runninghub.cn`、`www.runninghub.ai` |
+| `RUNNINGHUB_API_KEY` | ✅ | API Key（环境变量）                        |
+| `storage.mode` | ❌   | 存储模式，默认 `local`                     |
+| `storage.path` | ❌   | 本地存储路径，默认 `./output`              |
 
 ---
 
@@ -187,7 +196,7 @@ rhmcp --help
       "type": "local",
       "command": ["rhmcp", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "/完整路径/RHMCP"
       }
     }
   }
@@ -203,7 +212,7 @@ rhmcp --help
       "type": "local",
       "command": ["node", "/完整路径/RHMCP/dist/server/index.js", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "/完整路径/RHMCP"
       }
     }
   }

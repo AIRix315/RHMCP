@@ -43,31 +43,34 @@
 
 如果你想快速体验，可以使用我们提供的**共享测试 APP ID**：
 
+**新配置格式（推荐）：**
+
+```bash
+# 1. 创建服务配置
+cp service.json.example service.json
+
+# 2. 创建 APP 配置
+cp apps.json.example apps.json
+
+# 3. 设置 API Key
+echo "RUNNINGHUB_API_KEY=your_api_key_here" > .env
+```
+
+**service.json 示例：**
 ```json
 {
-  "apiKey": "YOUR_RUNNINGHUB_API_KEY",
-  "baseUrl": "www.runninghub.cn",
+  "baseUrl": "auto",
   "maxConcurrent": 1,
-  "storage": {
-    "mode": "local",
-    "path": "./output"
-  },
-  "apps": {
-    "qwen-text-to-image": {
-      "appId": "2037760725296357377",
-      "alias": "qwen-text-to-image",
-      "category": "image",
-      "description": "Qwen文生图",
-      "inputs": {}
-    }
-  },
-  "modelRules": { "rules": {}, "defaultLanguage": "zh" },
+  "storage": { "mode": "local", "path": "./output" },
   "retry": { "maxRetries": 3, "maxWaitTime": 600, "interval": 5 },
-  "logging": { "level": "info" }
+  "logging": { "level": "info" },
+  "modelRules": { "rules": {}, "defaultLanguage": "zh" }
 }
 ```
 
 > 🔑 **获取 API Key**: 访问 [RunningHub](https://www.runninghub.cn) 注册账号后，在「个人中心」→「API 控制台」获取
+
+> 💡 **提示**: 也支持旧配置格式 `rhmcp-config.json`，会自动迁移。
 
 ### 方式二：使用自己的 APP（推荐生产环境）
 
@@ -158,12 +161,14 @@ notepad %USERPROFILE%\.config\opencode\opencode.json
       "type": "local",
       "command": ["node", "/完整路径/RHMCP/dist/server/index.js", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "/完整路径/RHMCP"
       }
     }
   }
 }
 ```
+
+> 💡 `RHMCP_CONFIG` 指向配置目录（包含 service.json 和 apps.json）
 
 3. 重启 OpenCode
 

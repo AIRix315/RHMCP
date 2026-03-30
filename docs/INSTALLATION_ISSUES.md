@@ -65,6 +65,7 @@ RHMCP v1.0.0 - RunningHub AI Platform MCP Server
 ### 根本原因
 
 MCP 协议支持多种传输方式：
+
 - **STDIO**: 通过 `stdin/stdout` 通信，适用于本地进程集成
 - **HTTP**: 通过 HTTP API 通信，适用于远程服务和云部署
 
@@ -127,12 +128,14 @@ await server.connect(transport);
       "type": "local",
       "command": ["rhmcp", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/path/to/rhmcp-config.json"
+        "RHMCP_CONFIG": "/path/to/RHMCP"
       }
     }
   }
 }
 ```
+
+> 💡 `RHMCP_CONFIG` 指向配置目录（包含 service.json 和 apps.json）
 
 **HTTP 模式（云部署）**:
 
@@ -166,7 +169,7 @@ await server.connect(transport);
       "type": "local",
       "command": ["rhmcp", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "E:\\Projects\\RHMCP\\rhmcp-config.json"
+        "RHMCP_CONFIG": "E:\\Projects\\RHMCP"
       }
     }
   }
@@ -182,7 +185,7 @@ await server.connect(transport);
       "type": "local",
       "command": ["rhmcp", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "E:/Projects/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "E:/Projects/RHMCP"
       }
     }
   }
@@ -224,8 +227,9 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | rhmcp --stdi
 - [ ] 执行 `npm link` 全局链接
 - [ ] 验证命令可用：`rhmcp --help`
 - [ ] 验证 STDIO 模式：`echo '...' | rhmcp --stdio`
-- [ ] 配置文件使用正确的绝对路径
-- [ ] 配置正确的 `CONFIG_PATH` 环境变量（使用 `environment` 字段）
+- [ ] 配置目录包含 `service.json` 和 `apps.json`
+- [ ] 配置正确的 `RHMCP_CONFIG` 环境变量（使用 `environment` 字段）
+- [ ] API Key 已设置在 `.env` 文件或环境变量 `RUNNINGHUB_API_KEY`
 
 ---
 

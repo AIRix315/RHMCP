@@ -19,7 +19,7 @@ OpenCode 原生支持 MCP，配置后 Agent 自动发现所有工具。
 |------|------|------|------|
 | `type` | string | ✅ | 固定值 `"local"` |
 | `command` | array | ✅ | 启动命令数组 |
-| `environment` | object | ❌ | 环境变量 |
+| `environment` | object | ❌ | 环境变量（`RHMCP_CONFIG` 或 `CONFIG_PATH` 均可） |
 
 ---
 
@@ -34,7 +34,7 @@ OpenCode 原生支持 MCP，配置后 Agent 自动发现所有工具。
       "type": "local",
       "command": ["node", "/完整路径/RHMCP/dist/server/index.js", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "/完整路径/RHMCP"
       }
     }
   }
@@ -52,7 +52,23 @@ OpenCode 原生支持 MCP，配置后 Agent 自动发现所有工具。
       "type": "local",
       "command": ["rhmcp", "--stdio"],
       "environment": {
-        "CONFIG_PATH": "/完整路径/RHMCP/rhmcp-config.json"
+        "RHMCP_CONFIG": "/完整路径/RHMCP"
+      }
+    }
+  }
+}
+```
+
+### 方式三：使用 API Key 环境变量
+
+```json
+{
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["rhmcp", "--stdio"],
+      "environment": {
+        "RUNNINGHUB_API_KEY": "your_api_key_here"
       }
     }
   }
@@ -61,19 +77,30 @@ OpenCode 原生支持 MCP，配置后 Agent 自动发现所有工具。
 
 ---
 
+## 环境变量说明
+
+| 变量名 | 说明 | 优先级 |
+|--------|------|--------|
+| `RUNNINGHUB_API_KEY` | API Key（必填） | 最高 |
+| `RUNNINGHUB_BASE_URL` | API 域名（可选） | 高 |
+| `RHMCP_CONFIG` | 配置目录路径 | 中 |
+| `CONFIG_PATH` | 配置文件路径（旧格式兼容） | 低 |
+
+---
+
 ## CLI 命令方式
 
 ### Windows PowerShell
 
 ```powershell
-$env:CONFIG_PATH = "E:\Projects\RHMCP\rhmcp-config.json"
+$env:RHMCP_CONFIG = "E:\Projects\RHMCP"
 opencode mcp set rhmcp '{"type":"local","command":["rhmcp","--stdio"]}'
 ```
 
 ### Linux/macOS
 
 ```bash
-CONFIG_PATH=/path/to/rhmcp-config.json opencode mcp set rhmcp '{"type":"local","command":["rhmcp","--stdio"]}'
+RHMCP_CONFIG=/path/to/RHMCP opencode mcp set rhmcp '{"type":"local","command":["rhmcp","--stdio"]}'
 ```
 
 ---
@@ -128,4 +155,5 @@ rhmcp --help
 ### 配置文件未加载
 
 - 重启 OpenCode
-- 检查配置文件路径是否正确
+- 检查环境变量 `RHMCP_CONFIG` 是否正确设置
+- 确认 `service.json` 和 `apps.json` 存在于配置目录

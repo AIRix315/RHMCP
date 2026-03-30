@@ -1,16 +1,21 @@
 {
-  "qwen-text-to-image": {
-    "appId": "2037760725296357377",
-    "alias": "qwen-text-to-image",
-    "category": "image",
-    "description": "Qwen文生图"
+  "server": {
+    "qwen-text-to-image": {
+      "appId": "2037760725296357377",
+      "alias": "qwen-text-to-image",
+      "category": "image",
+      "description": "Qwen文生图"
+    },
+    "qwen-image-to-image": {
+      "appId": "2037822548796252162",
+      "alias": "qwen-image-to-image",
+      "category": "image",
+      "description": "Qwen提示词改图"
+    },
+    "_updated": "2026-03-30T00:00:00Z",
+    "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json"
   },
-  "qwen-image-to-image": {
-    "appId": "2037822548796252162",
-    "alias": "qwen-image-to-image",
-    "category": "image",
-    "description": "Qwen提示词改图"
-  },
-  "_updated": "2026-03-30T00:00:00Z",
-  "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json"
+  "user": {
+    "_comment": "用户自定义的APP配置放在这里"
+  }
 }

@@ -10,7 +10,9 @@ import { loadConfig } from "../config/loader.js";
 import { validateConfig } from "../config/validator.js";
 import { createServer, registerTools, registerResources } from "./register.js";
 
-const CONFIG_PATH = process.env.CONFIG_PATH || "rhmcp-config.json";
+// CONFIG_PATH 用于传递配置目录，默认为 undefined（自动检测）
+const CONFIG_PATH =
+  process.env.CONFIG_PATH || process.env.RHMCP_CONFIG || undefined;
 
 export async function startHttpServer(port?: number): Promise<void> {
   // 1. 加载配置（异步）

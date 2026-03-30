@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "apps.schema.json",
+  "title": "RHMCP Apps Configuration",
+  "description": "APP configurations for RunningHub MCP Server",
+  "type": "object",
+  "properties": {
+    "server": {
+      "type": "object",
+      "description": "Server-provided APP configurations (read-only)",
+      "additionalProperties": {
+        "$ref": "#/definitions/AppConfig"
+      }
+    },
+    "user": {
+      "type": "object",
+      "description": "User-defined APP configurations",
+      "additionalProperties": {
+        "$ref": "#/definitions/AppConfig"
+      }
+    }
+  },
+  "required": ["server", "user"],
+  "additionalProperties": false,
+  "definitions": {
+    "AppConfig": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "RunningHub APP ID"
+        },
+        "alias": {
+          "type": "string",
+          "description": "Human-readable alias for the APP"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["image", "audio", "video"],
+          "description": "APP category"
+        },
+        "description": {
+          "type": "string",
+          "description": "APP description"
+        },
+        "modelFamily": {
+          "type": "string",
+          "description": "Model family for automatic rule import"
+        },
+        "inputs": {
+          "type": "object",
+          "description": "APP input parameters",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "nodeId": { "type": "string" },
+              "fieldName": { "type": "string" },
+              "type": { "type": "string" },
+              "required": { "type": "boolean" },
+              "description": { "type": "string" },
+              "default": { "type": ["string", "number", "boolean", "null"] }
+            }
+          }
+        }
+      },
+      "required": ["appId", "alias", "category"]
+    }
+  }
+}
