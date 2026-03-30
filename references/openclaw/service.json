@@ -1,0 +1,21 @@
+{
+  "_comment": "OpenClaw 专属服务配置",
+
+  "baseUrl": "auto",
+
+  "storage": {
+    "mode": "none"
+  },
+
+  "maxConcurrent": 1,
+
+  "retry": {
+    "maxRetries": 3,
+    "maxWaitTime": 600,
+    "interval": 5
+  },
+
+  "logging": {
+    "level": "info"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "_comment": "RHMCP 服务配置 - 请复制为 service.json 使用",
+  
+  "baseUrl": "auto",
+  "_baseUrl_comment": "auto(自动检测) | www.runninghub.cn(国内站) | www.runninghub.ai(国际站)",
+  
+  "maxConcurrent": 1,
+  "_maxConcurrent_comment": "最大并发请求数",
+  
+  "storage": {
+    "mode": "none",
+    "_mode_comment": "none(不保存返回URL) | local(下载到本地) | auto(自动判断)",
+    "path": "./output"
+  },
+  
+  "retry": {
+    "maxRetries": 3,
+    "maxWaitTime": 600,
+    "interval": 5
+  },
+  
+  "logging": {
+    "level": "info",
+    "_level_comment": "debug | info | warn | error"
+  },
+  
+  "modelRules": {
+    "defaultLanguage": "zh"
+  }
+}

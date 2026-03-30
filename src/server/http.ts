@@ -13,9 +13,9 @@ import { createServer, registerTools, registerResources } from "./register.js";
 const CONFIG_PATH = process.env.CONFIG_PATH || "rhmcp-config.json";
 
 export async function startHttpServer(port?: number): Promise<void> {
-  // 1. 加载配置
+  // 1. 加载配置（异步）
   console.log("Loading configuration...");
-  const config = loadConfig();
+  const config = await loadConfig(CONFIG_PATH);
 
   // 2. 验证配置
   const validation = validateConfig(config);

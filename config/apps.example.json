@@ -1,0 +1,21 @@
+{
+  "_comment": "APP 配置文件 - 分层管理",
+  
+  "server": {
+    "_comment": "从 GitHub 自动拉取，rhmcp --update-apps 命令会更新此部分",
+    "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json",
+    "_updated": ""
+  },
+  
+  "user": {
+    "_comment": "用户自定义 APP，不会被更新覆盖",
+    
+    "_example": {
+      "appId": "YOUR_APP_ID",
+      "alias": "your-app-alias",
+      "category": "image",
+      "description": "您的自定义 APP",
+      "inputs": {}
+    }
+  }
+}

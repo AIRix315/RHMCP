@@ -1,10 +1,44 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
+import { RunningHubConfig, AppConfig } from "../types.js";
 
 const GetAppInfoSchema = z.object({
   appId: z.string().optional().describe("APP ID (可选，可通过别名查询)"),
   alias: z.string().optional().describe("APP别名 (可选，可通过ID查询)"),
 });
+
+/**
+ * 获取合并后的 APP 配置
+ */
+function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
+  // 优先使用新格式的 appsConfig
+  if (config.appsConfig) {
+    const merged: Record<string, AppConfig> = {};
+    
+    // 合并 server apps
+    if (config.appsConfig.server) {
+      for (const [alias, app] of Object.entries(config.appsConfig.server)) {
+        if (!alias.startsWith('_')) {
+          merged[alias] = app;
+        }
+      }
+    }
+    
+    // 合并 user apps（覆盖 server 同名）
+    if (config.appsConfig.user) {
+      for (const [alias, app] of Object.entries(config.appsConfig.user)) {
+        if (!alias.startsWith('_')) {
+          merged[alias] = app;
+        }
+      }
+    }
+    
+    return merged;
+  }
+  
+  // 回退到旧格式
+  return config.apps || {};
+}
 
 export const getAppInfoTool = {
   name: "rh_get_app_info",
@@ -14,10 +48,12 @@ export const getAppInfoTool = {
   async handler(
     args: z.infer<typeof GetAppInfoSchema>,
     client: RunningHubClient,
-    config: { apps: Record<string, { appId: string }> },
+    config: RunningHubConfig,
   ) {
+    const apps = getMergedApps(config);
+    
     // 1. 解析APP ID（支持别名）
-    const appId = args.appId || config.apps[args.alias || ""]?.appId;
+    const appId = args.appId || apps[args.alias || ""]?.appId;
     if (!appId) {
       throw new Error("需要提供 appId 或有效的 alias");
     }

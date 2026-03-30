@@ -1,7 +1,9 @@
 {
-  "name": "rhmcp",
+  "name": "runninghub-mcp",
   "version": "1.0.0",
-  "description": "RHMCP - RunningHub AI Platform MCP Server",
+  "description": "RunningHub AI Platform MCP Server - 支持 OpenCode、OpenClaw、Claude Desktop 等客户端",
+  "author": "AIRix315",
+  "license": "MIT",
   "type": "module",
   "main": "dist/server/index.js",
   "bin": {
@@ -13,11 +15,27 @@
     "dev": "tsx src/server/index.ts",
     "dev:stdio": "tsx src/server/index.ts --stdio"
   },
-  "keywords": ["mcp", "rhmcp", "runninghub", "ai"],
-  "author": "",
-  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "runninghub",
+    "ai",
+    "image-generation",
+    "video-generation",
+    "opencode",
+    "openclaw",
+    "claude"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AIRix315/RHMCP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AIRix315/RHMCP/issues"
+  },
+  "homepage": "https://github.com/AIRix315/RHMCP#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.6.1",
     "express": "^4.21.0",
     "zod": "^3.23.0"
   },

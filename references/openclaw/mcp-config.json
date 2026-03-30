@@ -1,0 +1,15 @@
+{
+  "_comment": "OpenClaw MCP 配置示例 - 复制到 ~/.openclaw/openclaw.json",
+
+  "mcp": {
+    "servers": {
+      "rhmcp": {
+        "command": "npx",
+        "args": ["runninghub-mcp", "--stdio"],
+        "env": {
+          "RUNNINGHUB_API_KEY": "your_api_key_here"
+        }
+      }
+    }
+  }
+}

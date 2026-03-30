@@ -6,7 +6,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import type { RunningHubConfig } from "../types.js";
+import type { RunningHubConfig, AppConfig } from "../types.js";
 import type { RunningHubClient } from "../api/client.js";
 
 // 导入所有工具
@@ -19,6 +19,35 @@ import { removeAppTool } from "../tools/remove-app.js";
 import { updateRulesTool } from "../rules/update.js";
 import { listRulesTool } from "../rules/list.js";
 import { validateConfigTool } from "../tools/validate-config.js";
+
+/**
+ * 获取合并后的 APP 配置
+ */
+function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
+  if (config.appsConfig) {
+    const merged: Record<string, AppConfig> = {};
+    
+    if (config.appsConfig.server) {
+      for (const [alias, app] of Object.entries(config.appsConfig.server)) {
+        if (!alias.startsWith('_')) {
+          merged[alias] = app;
+        }
+      }
+    }
+    
+    if (config.appsConfig.user) {
+      for (const [alias, app] of Object.entries(config.appsConfig.user)) {
+        if (!alias.startsWith('_')) {
+          merged[alias] = app;
+        }
+      }
+    }
+    
+    return merged;
+  }
+  
+  return config.apps || {};
+}
 
 export interface ServerContext {
   server: McpServer;
@@ -192,7 +221,7 @@ export function registerResources(ctx: ServerContext): void {
     "rh://apps",
     { description: "列出所有配置的APP", mimeType: "application/json" },
     async (uri: URL) => {
-      const apps = Object.entries(config.apps || {}).map(([alias, app]) => ({
+      const apps = Object.entries(getMergedApps(config)).map(([alias, app]) => ({
         alias,
         appId: app.appId,
         category: app.category,
@@ -222,7 +251,8 @@ export function registerResources(ctx: ServerContext): void {
           : variables.alias?.[0];
       if (!alias) throw new Error("缺少 alias 参数");
 
-      const app = config.apps[alias];
+      const apps = getMergedApps(config);
+      const app = apps[alias];
       if (!app) throw new Error(`APP "${alias}" 不存在`);
 
       const result = await client.getAppInfo(app.appId);

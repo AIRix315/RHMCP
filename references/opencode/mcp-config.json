@@ -1,0 +1,13 @@
+{
+  "_comment": "OpenCode MCP 配置示例 - 复制到 ~/.config/opencode/opencode.json",
+
+  "mcp": {
+    "rhmcp": {
+      "type": "local",
+      "command": ["npx", "runninghub-mcp", "--stdio"],
+      "environment": {
+        "RUNNINGHUB_API_KEY": "${RUNNINGHUB_API_KEY}"
+      }
+    }
+  }
+}

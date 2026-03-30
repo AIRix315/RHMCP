@@ -4,12 +4,33 @@
 // Configuration Types
 // ============================================
 
+/**
+ * BaseUrl 联合类型
+ * - "auto": 自动检测账号归属
+ * - "www.runninghub.cn": 国内站
+ * - "www.runninghub.ai": 国际站
+ */
+export type BaseUrl = "auto" | "www.runninghub.cn" | "www.runninghub.ai";
+
+/**
+ * 分层 APP 配置
+ * - server: 从 GitHub 拉取的官方 APP 列表
+ * - user: 用户自定义 APP，不会被更新覆盖
+ */
+export interface AppsConfig {
+  server: Record<string, AppConfig>;
+  user: Record<string, AppConfig>;
+  _updated?: string;  // 更新时间戳
+  _source?: string;   // 来源 URL
+}
+
 export interface RunningHubConfig {
   apiKey: string;
-  baseUrl: string;
+  baseUrl: BaseUrl | string;  // 支持 "auto" 或具体域名
   maxConcurrent: number;
   storage: StorageConfig;
-  apps: Record<string, AppConfig>;
+  apps?: Record<string, AppConfig>;           // 旧格式（扁平），保持向后兼容
+  appsConfig?: AppsConfig;                     // 新格式（分层）
   modelRules: ModelRulesConfig;
   retry: RetryConfig;
   logging: LogConfig;
