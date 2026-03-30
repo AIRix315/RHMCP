@@ -26,26 +26,26 @@ import { validateConfigTool } from "../tools/validate-config.js";
 function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   if (config.appsConfig) {
     const merged: Record<string, AppConfig> = {};
-    
+
     if (config.appsConfig.server) {
       for (const [alias, app] of Object.entries(config.appsConfig.server)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     if (config.appsConfig.user) {
       for (const [alias, app] of Object.entries(config.appsConfig.user)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     return merged;
   }
-  
+
   return config.apps || {};
 }
 
@@ -221,12 +221,14 @@ export function registerResources(ctx: ServerContext): void {
     "rh://apps",
     { description: "列出所有配置的APP", mimeType: "application/json" },
     async (uri: URL) => {
-      const apps = Object.entries(getMergedApps(config)).map(([alias, app]) => ({
-        alias,
-        appId: app.appId,
-        category: app.category,
-        description: app.description,
-      }));
+      const apps = Object.entries(getMergedApps(config)).map(
+        ([alias, app]) => ({
+          alias,
+          appId: app.appId,
+          category: app.category,
+          description: app.description,
+        }),
+      );
       return {
         contents: [
           {

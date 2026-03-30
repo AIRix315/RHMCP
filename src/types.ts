@@ -20,17 +20,17 @@ export type BaseUrl = "auto" | "www.runninghub.cn" | "www.runninghub.ai";
 export interface AppsConfig {
   server: Record<string, AppConfig>;
   user: Record<string, AppConfig>;
-  _updated?: string;  // 更新时间戳
-  _source?: string;   // 来源 URL
+  _updated?: string; // 更新时间戳
+  _source?: string; // 来源 URL
 }
 
 export interface RunningHubConfig {
   apiKey: string;
-  baseUrl: BaseUrl | string;  // 支持 "auto" 或具体域名
+  baseUrl: BaseUrl | string; // 支持 "auto" 或具体域名
   maxConcurrent: number;
   storage: StorageConfig;
-  apps?: Record<string, AppConfig>;           // 旧格式（扁平），保持向后兼容
-  appsConfig?: AppsConfig;                     // 新格式（分层）
+  apps?: Record<string, AppConfig>; // 旧格式（扁平），保持向后兼容
+  appsConfig?: AppsConfig; // 新格式（分层）
   modelRules: ModelRulesConfig;
   retry: RetryConfig;
   logging: LogConfig;

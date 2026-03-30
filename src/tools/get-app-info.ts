@@ -14,28 +14,28 @@ function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   // 优先使用新格式的 appsConfig
   if (config.appsConfig) {
     const merged: Record<string, AppConfig> = {};
-    
+
     // 合并 server apps
     if (config.appsConfig.server) {
       for (const [alias, app] of Object.entries(config.appsConfig.server)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     // 合并 user apps（覆盖 server 同名）
     if (config.appsConfig.user) {
       for (const [alias, app] of Object.entries(config.appsConfig.user)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     return merged;
   }
-  
+
   // 回退到旧格式
   return config.apps || {};
 }
@@ -51,7 +51,7 @@ export const getAppInfoTool = {
     config: RunningHubConfig,
   ) {
     const apps = getMergedApps(config);
-    
+
     // 1. 解析APP ID（支持别名）
     const appId = args.appId || apps[args.alias || ""]?.appId;
     if (!appId) {

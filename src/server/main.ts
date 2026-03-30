@@ -15,11 +15,11 @@ export function detectTransportMode(): "stdio" | "http" | "cli" {
   // CLI 命令优先检测
   if (process.argv.includes("--update-apps")) return "cli";
   if (process.argv.includes("--migrate")) return "cli";
-  
+
   // 传输模式检测
   if (process.argv.includes("--stdio")) return "stdio";
   if (process.env.MCP_TRANSPORT === "stdio") return "stdio";
-  
+
   return "http";
 }
 
@@ -60,9 +60,9 @@ export async function main(): Promise<void> {
     showHelp();
     process.exit(0);
   }
-  
+
   const mode = detectTransportMode();
-  
+
   switch (mode) {
     case "cli":
       await handleCliCommand();
@@ -82,18 +82,18 @@ export async function main(): Promise<void> {
  */
 async function handleCliCommand(): Promise<void> {
   const args = process.argv.slice(2);
-  
+
   if (args.includes("--update-apps")) {
     const appsFileIndex = args.indexOf("--update-apps");
     const appsFile = args[appsFileIndex + 1] || "./apps.json";
     await updateApps(appsFile);
     process.exit(0);
   }
-  
+
   if (args.includes("--migrate")) {
     const migrateIndex = args.indexOf("--migrate");
     const oldConfigPath = args[migrateIndex + 1] || findLegacyConfig();
-    
+
     if (oldConfigPath) {
       await migrate(oldConfigPath);
       process.exit(0);
@@ -103,7 +103,7 @@ async function handleCliCommand(): Promise<void> {
       process.exit(1);
     }
   }
-  
+
   // 未知 CLI 命令
   console.error(`[RHMCP] 未知命令: ${args.join(" ")}`);
   showHelp();

@@ -14,9 +14,11 @@ export const removeAppTool = {
   async handler(args: z.infer<typeof RemoveAppSchema>, configPath?: string) {
     // 1. 检查配置路径
     if (!configPath) {
-      throw new Error("配置文件路径未设置，无法删除 APP。请设置 CONFIG_PATH 环境变量或使用新配置格式。");
+      throw new Error(
+        "配置文件路径未设置，无法删除 APP。请设置 CONFIG_PATH 环境变量或使用新配置格式。",
+      );
     }
-    
+
     // 2. 读取配置
     const configContent = readFileSync(configPath, "utf-8");
     const config = JSON.parse(configContent);

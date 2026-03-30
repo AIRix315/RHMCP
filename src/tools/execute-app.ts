@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
-import { NodeInfo, RetryConfig, AppConfig, StorageConfig, RunningHubConfig } from "../types.js";
+import {
+  NodeInfo,
+  RetryConfig,
+  AppConfig,
+  StorageConfig,
+  RunningHubConfig,
+} from "../types.js";
 import { processOutput, ensureOutputDir } from "../utils/storage.js";
 
 const ExecuteAppSchema = z.object({
@@ -21,28 +27,28 @@ function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   // 优先使用新格式的 appsConfig
   if (config.appsConfig) {
     const merged: Record<string, AppConfig> = {};
-    
+
     // 合并 server apps
     if (config.appsConfig.server) {
       for (const [alias, app] of Object.entries(config.appsConfig.server)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     // 合并 user apps（覆盖 server 同名）
     if (config.appsConfig.user) {
       for (const [alias, app] of Object.entries(config.appsConfig.user)) {
-        if (!alias.startsWith('_')) {
+        if (!alias.startsWith("_")) {
           merged[alias] = app;
         }
       }
     }
-    
+
     return merged;
   }
-  
+
   // 回退到旧格式
   return config.apps || {};
 }
@@ -58,7 +64,7 @@ export const executeAppTool = {
     config: RunningHubConfig,
   ) {
     const apps = getMergedApps(config);
-    
+
     // 1. 解析APP ID
     const appId = args.appId || apps[args.alias || ""]?.appId;
     if (!appId) {
@@ -66,7 +72,8 @@ export const executeAppTool = {
     }
 
     // 2. 构建nodeInfoList
-    const appConfig = apps[Object.keys(apps).find((k) => apps[k].appId === appId) || ""];
+    const appConfig =
+      apps[Object.keys(apps).find((k) => apps[k].appId === appId) || ""];
 
     const nodeInfoList: NodeInfo[] = [];
     if (appConfig?.inputs) {
