@@ -19,7 +19,7 @@ export function validateConfig(config: RunningHubConfig): ValidationResult {
   }
 
   // APP配置检查
-  for (const [alias, app] of Object.entries(config.apps || {})) {
+  for (const [alias, app] of Object.entries(config.apps ?? {})) {
     if (!app.appId) {
       errors.push(`App "${alias}" is missing appId`);
     }

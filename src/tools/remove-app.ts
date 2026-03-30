@@ -40,7 +40,7 @@ export const removeAppTool = {
     } else if (args.appId) {
       // 通过ID删除
       for (const [key, app] of Object.entries(config.apps)) {
-        if ((app as any).appId === args.appId) {
+        if ((app as { appId: string }).appId === args.appId) {
           keyToDelete = key;
           break;
         }

@@ -46,7 +46,7 @@ function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
     return merged;
   }
 
-  return config.apps || {};
+  return config.apps ?? {};
 }
 
 export interface ServerContext {

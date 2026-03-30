@@ -68,7 +68,7 @@ export const listRulesTool = {
           if (args.category && rule.category !== args.category) continue;
 
           rules.push({
-            name: rule.name || file.replace(".json", ""),
+            name: rule.name ?? file.replace(".json", ""),
             category: rule.category,
             description: rule.description,
           });
@@ -81,9 +81,9 @@ export const listRulesTool = {
     }
 
     return {
-      version: index.version || "unknown",
-      updated: index.updated || "unknown",
-      source: index.source || "local",
+      version: index.version ?? "unknown",
+      updated: index.updated ?? "unknown",
+      source: index.source ?? "local",
       count: rules.length,
       rules,
     };

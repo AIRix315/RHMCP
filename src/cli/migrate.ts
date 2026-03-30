@@ -7,8 +7,8 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join, dirname, basename } from "path";
-import { RunningHubConfig, AppConfig } from "../types.js";
+import { join, dirname } from "path";
+import { AppConfig } from "../types.js";
 
 /**
  * 旧配置格式（兼容性）
@@ -48,12 +48,12 @@ RUNNINGHUB_API_KEY=${rawConfig.apiKey}
 
   // 2. 创建 service.json
   const serviceConfig: Record<string, unknown> = {
-    baseUrl: rawConfig.baseUrl || "auto",
-    maxConcurrent: rawConfig.maxConcurrent || 1,
-    storage: rawConfig.storage || { mode: "local", path: "./output" },
-    retry: rawConfig.retry || { maxRetries: 3, maxWaitTime: 600, interval: 5 },
-    logging: rawConfig.logging || { level: "info" },
-    modelRules: rawConfig.modelRules || { rules: {}, defaultLanguage: "zh" },
+    baseUrl: rawConfig.baseUrl ?? "auto",
+    maxConcurrent: rawConfig.maxConcurrent ?? 1,
+    storage: rawConfig.storage ?? { mode: "local", path: "./output" },
+    retry: rawConfig.retry ?? { maxRetries: 3, maxWaitTime: 600, interval: 5 },
+    logging: rawConfig.logging ?? { level: "info" },
+    modelRules: rawConfig.modelRules ?? { rules: {}, defaultLanguage: "zh" },
   };
 
   // 移除 undefined 字段
@@ -68,11 +68,11 @@ RUNNINGHUB_API_KEY=${rawConfig.apiKey}
   // 3. 创建 apps.json
   const appsConfig: Record<string, unknown> = {
     server: {},
-    user: rawConfig.apps || {},
+    user: rawConfig.apps ?? {},
   };
 
   // 如果有 modelRules，添加到 user 的注释
-  if (rawConfig.modelRules && Object.keys(rawConfig.modelRules.rules || {}).length > 0) {
+  if (rawConfig.modelRules && Object.keys(rawConfig.modelRules.rules ?? {}).length > 0) {
     (appsConfig.user as Record<string, unknown>)._modelRules = rawConfig.modelRules;
     console.log("[RHMCP] 注意: modelRules 已迁移到 apps.json (user._modelRules)");
   }

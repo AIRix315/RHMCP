@@ -13,7 +13,7 @@ export const validateConfigTool = {
 
   async handler(args: z.infer<typeof ValidateConfigSchema>) {
     // 1. 查找配置文件
-    const configPath = args.configPath || findConfigFile();
+    const configPath = args.configPath ?? findConfigFile();
     if (!configPath) {
       return {
         valid: false,
@@ -23,14 +23,15 @@ export const validateConfigTool = {
     }
 
     // 2. 读取并解析
-    let config: any;
+    let config: Record<string, unknown>;
     try {
       const content = readFileSync(configPath, "utf-8");
-      config = JSON.parse(content);
-    } catch (error: any) {
+      config = JSON.parse(content) as Record<string, unknown>;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       return {
         valid: false,
-        errors: [`配置文件解析失败: ${error.message}`],
+        errors: [`配置文件解析失败: ${message}`],
         warnings: [],
       };
     }
@@ -47,16 +48,17 @@ export const validateConfigTool = {
     }
 
     // 4. 验证APP配置
-    if (config.apps) {
-      for (const [alias, app] of Object.entries(config.apps)) {
-        const a = app as any;
-        if (!a.appId) {
+    const apps = config.apps as Record<string, Record<string, unknown>> | undefined;
+    if (apps) {
+      for (const [alias, app] of Object.entries(apps)) {
+        if (!app.appId) {
           errors.push(`APP "${alias}" 缺少 appId`);
         }
-        if (!a.category) {
+        if (!app.category) {
           warnings.push(`APP "${alias}" 缺少 category`);
         }
-        if (!a.inputs || Object.keys(a.inputs).length === 0) {
+        const inputs = app.inputs as Record<string, unknown> | undefined;
+        if (!inputs || Object.keys(inputs).length === 0) {
           warnings.push(`APP "${alias}" 没有定义 inputs`);
         }
       }
@@ -65,18 +67,20 @@ export const validateConfigTool = {
     }
 
     // 5. 验证存储配置
-    if (config.storage) {
-      if (!config.storage.path) {
+    const storage = config.storage as { path?: string } | undefined;
+    if (storage) {
+      if (!storage.path) {
         warnings.push("storage.path 未设置，将使用默认值");
       }
     }
 
     // 6. 验证重试配置
-    if (config.retry) {
-      if (config.retry.maxRetries < 0) {
+    const retry = config.retry as { maxRetries?: number; maxWaitTime?: number } | undefined;
+    if (retry) {
+      if (retry.maxRetries !== undefined && retry.maxRetries < 0) {
         errors.push("retry.maxRetries 不能为负数");
       }
-      if (config.retry.maxWaitTime < 0) {
+      if (retry.maxWaitTime !== undefined && retry.maxWaitTime < 0) {
         errors.push("retry.maxWaitTime 不能为负数");
       }
     }
@@ -86,7 +90,7 @@ export const validateConfigTool = {
       configPath,
       errors,
       warnings,
-      appCount: config.apps ? Object.keys(config.apps).length : 0,
+      appCount: config.apps ? Object.keys(config.apps as Record<string, unknown>).length : 0,
     };
   },
 };
@@ -101,7 +105,9 @@ function findConfigFile(): string | null {
     try {
       readFileSync(p, "utf-8");
       return p;
-    } catch {}
+    } catch {
+      // 文件不存在，继续检查下一个路径
+    }
   }
   return null;
 }

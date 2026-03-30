@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
-import { NodeInfo, RetryConfig, AppConfig, StorageConfig, RunningHubConfig } from "../types.js";
+import { NodeInfo, AppConfig, RunningHubConfig } from "../types.js";
 import { processOutput, ensureOutputDir } from "../utils/storage.js";
 
 const ExecuteAppSchema = z.object({
@@ -40,7 +40,7 @@ function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   }
 
   // 回退到旧格式
-  return config.apps || {};
+  return config.apps ?? {};
 }
 
 export const executeAppTool = {
@@ -56,13 +56,13 @@ export const executeAppTool = {
     const apps = getMergedApps(config);
 
     // 1. 解析APP ID
-    const appId = args.appId || apps[args.alias || ""]?.appId;
+    const appId = args.appId ?? apps[args.alias ?? ""]?.appId;
     if (!appId) {
       throw new Error("需要提供 appId 或有效的 alias");
     }
 
     // 2. 构建nodeInfoList
-    const appConfig = apps[Object.keys(apps).find((k) => apps[k].appId === appId) || ""];
+    const appConfig = apps[Object.keys(apps).find((k) => apps[k].appId === appId) ?? ""];
 
     const nodeInfoList: NodeInfo[] = [];
     if (appConfig?.inputs) {
@@ -84,7 +84,7 @@ export const executeAppTool = {
       throw new Error(`提交任务失败: ${submitResult.msg}`);
     }
 
-    const taskId = (submitResult as any).data.taskId;
+    const taskId = (submitResult as { data: { taskId: string } }).data.taskId;
 
     // 4. 异步模式直接返回
     if (args.mode === "async") {
@@ -93,9 +93,14 @@ export const executeAppTool = {
 
     // 5. 同步模式：轮询等待结果
     const startTime = Date.now();
-    const maxWait = (appConfig as any).retry?.maxWaitTime || config.retry.maxWaitTime;
-    const interval = (appConfig as any).retry?.interval || config.retry.interval;
-    const maxRetries = (appConfig as any).retry?.maxRetries || config.retry.maxRetries;
+    const maxWait =
+      (appConfig as { retry?: { maxWaitTime?: number } }).retry?.maxWaitTime ??
+      config.retry.maxWaitTime;
+    const interval =
+      (appConfig as { retry?: { interval?: number } }).retry?.interval ?? config.retry.interval;
+    const maxRetries =
+      (appConfig as { retry?: { maxRetries?: number } }).retry?.maxRetries ??
+      config.retry.maxRetries;
 
     let retries = 0;
     while (Date.now() - startTime < maxWait * 1000) {
@@ -103,17 +108,23 @@ export const executeAppTool = {
 
       if (result.code === 0 && result.data) {
         // 6. 根据存储模式处理生成物
-        const storageMode = config.storage?.mode || "local";
-        const outputPath = config.storage?.path || "./output";
+        const storageMode = config.storage?.mode ?? "local";
+        const outputPath = config.storage?.path ?? "./output";
 
         // 确保输出目录存在
         if (storageMode === "local" || storageMode === "auto") {
           ensureOutputDir(outputPath);
         }
 
-        const processedOutputs = [];
+        const processedOutputs: Array<{
+          fileUrl?: string;
+          fileType?: string;
+          originalUrl?: string;
+          localPath?: string;
+          storageMode?: string;
+        }> = [];
         for (let i = 0; i < result.data.length; i++) {
-          const output = result.data[i] as any;
+          const output = result.data[i];
           if (output.fileUrl) {
             const processed = await processOutput(
               output.fileUrl,

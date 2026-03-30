@@ -11,7 +11,6 @@ import {
   AppConfig,
   AppsConfig,
   StorageConfig,
-  RetryConfig,
   LogConfig,
   ModelRulesConfig,
   CloudStorageConfig,
@@ -63,7 +62,7 @@ type JsonConfig = Record<string, unknown>;
  * 加载配置（异步版本，支持 baseUrl 自动检测）
  */
 export async function loadConfig(configPath?: string): Promise<RunningHubConfig> {
-  const explicitPath = configPath || process.env[ENV_CONFIG_PATH];
+  const explicitPath = configPath ?? process.env[ENV_CONFIG_PATH];
 
   // 1. 尝试加载旧格式（向后兼容）
   const legacyPath = findLegacyConfig(explicitPath);
@@ -80,7 +79,7 @@ export async function loadConfig(configPath?: string): Promise<RunningHubConfig>
  * 加载新格式配置（service.json + apps.json + .env）
  */
 async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
-  const dir = configDir || process.cwd();
+  const dir = configDir ?? process.cwd();
 
   // 加载 .env（如果存在）
   loadEnvFile(dir);
@@ -94,10 +93,10 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
   const appsConfig = loadJsonFile(appsPath) as AppsConfig | null;
 
   // 合并配置
-  const baseUrl = process.env[ENV_BASE_URL] || getString(serviceConfig, "baseUrl", "auto");
+  const baseUrl = process.env[ENV_BASE_URL] ?? getString(serviceConfig, "baseUrl", "auto");
 
   const config: RunningHubConfig = {
-    apiKey: process.env[ENV_API_KEY] || getString(serviceConfig, "apiKey", ""),
+    apiKey: process.env[ENV_API_KEY] ?? getString(serviceConfig, "apiKey", ""),
     baseUrl: baseUrl,
     maxConcurrent: getNumber(serviceConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
     storage: {
@@ -105,7 +104,7 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
       path: getString(getObject(serviceConfig, "storage"), "path", DEFAULTS.storage.path),
       cloudConfig: getCloudConfig(serviceConfig),
     },
-    appsConfig: appsConfig || { server: {}, user: {} },
+    appsConfig: appsConfig ?? { server: {}, user: {} },
     apps: mergeApps(appsConfig),
     modelRules: {
       rules: getModelRules(serviceConfig),
@@ -324,8 +323,8 @@ async function migrateAndLoad(oldPath: string): Promise<RunningHubConfig> {
     throw new Error(`无法加载配置文件: ${oldPath}`);
   }
 
-  const apiKey = process.env[ENV_API_KEY] || getString(rawConfig, "apiKey", "");
-  const baseUrl = process.env[ENV_BASE_URL] || getString(rawConfig, "baseUrl", "auto");
+  const apiKey = process.env[ENV_API_KEY] ?? getString(rawConfig, "apiKey", "");
+  const baseUrl = process.env[ENV_BASE_URL] ?? getString(rawConfig, "baseUrl", "auto");
 
   const config: RunningHubConfig = {
     apiKey,
@@ -336,10 +335,10 @@ async function migrateAndLoad(oldPath: string): Promise<RunningHubConfig> {
       path: getString(getObject(rawConfig, "storage"), "path", DEFAULTS.storage.path),
       cloudConfig: getCloudConfig(rawConfig),
     },
-    apps: (rawConfig.apps as Record<string, AppConfig>) || {},
+    apps: (rawConfig.apps as Record<string, AppConfig>) ?? {},
     appsConfig: {
       server: {},
-      user: (rawConfig.apps as Record<string, AppConfig>) || {},
+      user: (rawConfig.apps as Record<string, AppConfig>) ?? {},
     },
     modelRules: {
       rules: getModelRules(rawConfig),
@@ -422,18 +421,18 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
     }
 
     return {
-      apiKey: process.env[ENV_API_KEY] || getString(rawConfig, "apiKey", ""),
-      baseUrl: process.env[ENV_BASE_URL] || getString(rawConfig, "baseUrl", DEFAULTS.baseUrl),
+      apiKey: process.env[ENV_API_KEY] ?? getString(rawConfig, "apiKey", ""),
+      baseUrl: process.env[ENV_BASE_URL] ?? getString(rawConfig, "baseUrl", DEFAULTS.baseUrl),
       maxConcurrent: getNumber(rawConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
       storage: {
         mode: getStorageMode(rawConfig, DEFAULTS.storage.mode),
         path: getString(getObject(rawConfig, "storage"), "path", DEFAULTS.storage.path),
         cloudConfig: getCloudConfig(rawConfig),
       },
-      apps: (rawConfig.apps as Record<string, AppConfig>) || {},
+      apps: (rawConfig.apps as Record<string, AppConfig>) ?? {},
       appsConfig: {
         server: {},
-        user: (rawConfig.apps as Record<string, AppConfig>) || {},
+        user: (rawConfig.apps as Record<string, AppConfig>) ?? {},
       },
       modelRules: {
         rules: getModelRules(rawConfig),
@@ -463,22 +462,22 @@ export function loadConfigSync(configPath?: string): RunningHubConfig {
   }
 
   // 尝试同步加载新格式（不支持自动检测）
-  const dir = configPath || process.cwd();
+  const dir = configPath ?? process.cwd();
   loadEnvFile(dir);
 
   const serviceConfig = loadJsonFile(join(dir, NEW_CONFIG_FILES.service));
   const appsConfig = loadJsonFile(join(dir, NEW_CONFIG_FILES.apps)) as AppsConfig | null;
 
   return {
-    apiKey: process.env[ENV_API_KEY] || getString(serviceConfig, "apiKey", ""),
-    baseUrl: process.env[ENV_BASE_URL] || getString(serviceConfig, "baseUrl", DEFAULTS.baseUrl),
+    apiKey: process.env[ENV_API_KEY] ?? getString(serviceConfig, "apiKey", ""),
+    baseUrl: process.env[ENV_BASE_URL] ?? getString(serviceConfig, "baseUrl", DEFAULTS.baseUrl),
     maxConcurrent: getNumber(serviceConfig, "maxConcurrent", DEFAULTS.maxConcurrent),
     storage: {
       mode: getStorageMode(serviceConfig, DEFAULTS.storage.mode),
       path: getString(getObject(serviceConfig, "storage"), "path", DEFAULTS.storage.path),
     },
     apps: mergeApps(appsConfig),
-    appsConfig: appsConfig || { server: {}, user: {} },
+    appsConfig: appsConfig ?? { server: {}, user: {} },
     modelRules: {
       rules: getModelRules(serviceConfig),
       defaultLanguage: getString(
@@ -543,7 +542,7 @@ export function validateConfig(config: RunningHubConfig): {
   }
 
   // APP 配置检查（支持新旧格式）
-  const apps = config.apps || mergeApps(config.appsConfig);
+  const apps = config.apps ?? mergeApps(config.appsConfig);
   if (Object.keys(apps).length === 0) {
     warnings.push("未配置任何 APP，请运行 rhmcp --update-apps 或在 apps.json 中添加配置");
   }

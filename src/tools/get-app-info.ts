@@ -37,7 +37,7 @@ function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   }
 
   // 回退到旧格式
-  return config.apps || {};
+  return config.apps ?? {};
 }
 
 export const getAppInfoTool = {
@@ -53,7 +53,7 @@ export const getAppInfoTool = {
     const apps = getMergedApps(config);
 
     // 1. 解析APP ID（支持别名）
-    const appId = args.appId || apps[args.alias || ""]?.appId;
+    const appId = args.appId ?? apps[args.alias ?? ""]?.appId;
     if (!appId) {
       throw new Error("需要提供 appId 或有效的 alias");
     }

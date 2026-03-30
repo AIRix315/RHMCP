@@ -44,7 +44,7 @@ export function mergeConstraints(constraints: Constraints): Record<string, Const
  * 验证参数是否符合约束
  */
 export function validateParams(
-  params: Record<string, any>,
+  params: Record<string, unknown>,
   inputs: Record<string, InputParam>,
   constraints: Record<string, Constraint>
 ): ValidationResult {

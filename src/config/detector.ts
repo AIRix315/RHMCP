@@ -24,7 +24,7 @@ interface DetectResult {
  * @returns 检测到的站点 URL
  */
 export async function detectBaseUrl(apiKey: string, testAppId?: string): Promise<string> {
-  const appId = testAppId || DEFAULT_TEST_APP_ID;
+  const appId = testAppId ?? DEFAULT_TEST_APP_ID;
 
   console.error("[RHMCP] 正在自动检测账号归属站点...");
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ensureDir, writeFileFunc, downloadFile } from "../utils/fs.js";
+import { ensureDir, writeFileFunc } from "../utils/fs.js";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { ModelRule, RunningHubConfig } from "../types.js";
