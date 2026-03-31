@@ -1,6 +1,6 @@
 {
   "server": {
-    "_updated": "2026-03-30T00:00:00Z",
+    "_updated": "2026-03-31T00:00:00Z",
     "_source": "https://raw.githubusercontent.com/AIRix315/RHMCP/main/references/apps.json",
 
     "qwen-text-to-image": {
@@ -13,7 +13,7 @@
       "description": "Qwen 文生图。适用于：中文描述、创意插图。",
       "mcpLevel": "full",
       "inputs": {
-        "text": {
+        "16": {
           "nodeId": "16",
           "nodeName": "Text Multiline",
           "fieldName": "text",
@@ -26,7 +26,7 @@
             "dynamicPrompts": true
           }
         },
-        "width": {
+        "19": {
           "nodeId": "19",
           "nodeName": "PrimitiveInt",
           "fieldName": "value",
@@ -40,13 +40,13 @@
             "control_after_generate": true
           }
         },
-        "height": {
+        "20": {
           "nodeId": "20",
           "nodeName": "PrimitiveInt",
           "fieldName": "value",
           "type": "INT",
-          "description": "High",
-          "descriptionEn": "High",
+          "description": "Height",
+          "descriptionEn": "Height",
           "processHint": "direct",
           "constraints": {
             "min": -9223372036854775807,
@@ -75,7 +75,7 @@
       "description": "Qwen 提示词改图。适用于：图像风格转换、局部修改。",
       "mcpLevel": "partial",
       "inputs": {
-        "image": {
+        "13": {
           "nodeId": "13",
           "nodeName": "LoadImage",
           "fieldName": "image",
@@ -87,7 +87,7 @@
             "image_upload": true
           }
         },
-        "text": {
+        "30": {
           "nodeId": "30",
           "nodeName": "Text Multiline",
           "fieldName": "text",
@@ -106,6 +106,337 @@
         "strengths": ["提示词理解强", "风格转换"],
         "bestFor": ["图像修改", "风格迁移"],
         "speed": "medium"
+      }
+    },
+
+    "qwen-text-to-image-upscale": {
+      "appId": "2038131610033332226",
+      "alias": "qwen-text-to-image-upscale",
+      "category": "image",
+      "webappName": "AIRix [API] Qwen002 文生图+SedX2放大",
+      "modelName": "Qwen002",
+      "usageType": "文生图+SedX2放大",
+      "description": "Qwen002 文生图+SedX2放大。适用于：高清生成、细节增强。",
+      "mcpLevel": "full",
+      "inputs": {
+        "20": {
+          "nodeId": "20",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        },
+        "5": {
+          "nodeId": "5",
+          "nodeName": "PrimitiveInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Width",
+          "descriptionEn": "Width",
+          "processHint": "direct",
+          "constraints": {
+            "min": -9223372036854775807,
+            "max": 9223372036854775807,
+            "control_after_generate": true
+          }
+        },
+        "4": {
+          "nodeId": "4",
+          "nodeName": "PrimitiveInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Height",
+          "descriptionEn": "Height",
+          "processHint": "direct",
+          "constraints": {
+            "min": -9223372036854775807,
+            "max": 9223372036854775807,
+            "control_after_generate": true
+          }
+        }
+      },
+      "tags": ["chinese", "high-resolution", "text-to-image"],
+      "capabilities": {
+        "strengths": ["中文理解强", "自动超分"],
+        "bestFor": ["高清图生成", "细节增强"],
+        "speed": "medium",
+        "quality": "high"
+      }
+    },
+
+    "indextts-audio-generation": {
+      "appId": "2038460463490535426",
+      "alias": "indextts-audio-generation",
+      "category": "audio",
+      "webappName": "AIRix [API] IndexTTS010 音频生成",
+      "modelName": "IndexTTS010",
+      "usageType": "音频生成",
+      "description": "IndexTTS 语音合成。适用于：文本转语音、声音克隆。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "47": {
+          "nodeId": "47",
+          "nodeName": "CR Prompt Text",
+          "fieldName": "prompt",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true
+          }
+        },
+        "46": {
+          "nodeId": "46",
+          "nodeName": "LoadAudio",
+          "fieldName": "audio",
+          "type": "AUDIO",
+          "description": "RefAudio",
+          "descriptionEn": "RefAudio",
+          "processHint": "upload",
+          "constraints": {
+            "audio_upload": true
+          }
+        }
+      },
+      "tags": ["tts", "chinese", "voice-clone"],
+      "capabilities": {
+        "strengths": ["语音克隆", "自然度高"],
+        "bestFor": ["语音合成", "配音制作"],
+        "speed": "fast",
+        "quality": "high"
+      }
+    },
+
+    "qwentts-audio-generation": {
+      "appId": "2038460895365439489",
+      "alias": "qwentts-audio-generation",
+      "category": "audio",
+      "webappName": "AIRix [API] QwenTTS011 音频生成",
+      "modelName": "QwenTTS011",
+      "usageType": "音频生成",
+      "description": "QwenTTS 语音合成。适用于：文本转语音、多角色配音。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "9": {
+          "nodeId": "9",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        },
+        "7": {
+          "nodeId": "7",
+          "nodeName": "LoadAudio",
+          "fieldName": "audio",
+          "type": "AUDIO",
+          "description": "RefAudio",
+          "descriptionEn": "RefAudio",
+          "processHint": "upload",
+          "constraints": {
+            "audio_upload": true
+          }
+        }
+      },
+      "tags": ["tts", "chinese", "multi-speaker"],
+      "capabilities": {
+        "strengths": ["多音色支持", "情感表达强"],
+        "bestFor": ["角色配音", "有声读物"],
+        "speed": "fast",
+        "quality": "high"
+      }
+    },
+
+    "infinite-digital-human-integrated": {
+      "appId": "2038472757071056897",
+      "alias": "infinite-digital-human-integrated",
+      "category": "video",
+      "webappName": "AIRix [API] TTS+Infinite020 语音图片数字人集成",
+      "modelName": "TTS+Infinite020",
+      "usageType": "语音图片数字人集成",
+      "description": "数字人视频生成（集成TTS）。适用于：虚拟主播、数字人直播。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "201": {
+          "nodeId": "201",
+          "nodeName": "LoadAudio",
+          "fieldName": "audio",
+          "type": "AUDIO",
+          "description": "UpRefAudio",
+          "descriptionEn": "UpRefAudio",
+          "processHint": "upload",
+          "constraints": {
+            "audio_upload": true
+          }
+        },
+        "250": {
+          "nodeId": "250",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "AudioPrompt",
+          "descriptionEn": "AudioPrompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        },
+        "133": {
+          "nodeId": "133",
+          "nodeName": "LoadImage",
+          "fieldName": "image",
+          "type": "IMAGE",
+          "description": "UpRefImage",
+          "descriptionEn": "UpRefImage",
+          "processHint": "upload",
+          "constraints": {
+            "image_upload": true
+          }
+        },
+        "209": {
+          "nodeId": "209",
+          "nodeName": "CR Text",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "VideoPrompt",
+          "descriptionEn": "VideoPrompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true
+          }
+        },
+        "207": {
+          "nodeId": "207",
+          "nodeName": "ImpactInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Width",
+          "descriptionEn": "Width",
+          "processHint": "direct",
+          "constraints": {
+            "min": 0,
+            "max": 9223372036854775807,
+            "step": 1
+          }
+        },
+        "211": {
+          "nodeId": "211",
+          "nodeName": "ImpactInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Height",
+          "descriptionEn": "Height",
+          "processHint": "direct",
+          "constraints": {
+            "min": 0,
+            "max": 9223372036854775807,
+            "step": 1
+          }
+        }
+      },
+      "tags": ["digital-human", "tts", "video-generation"],
+      "capabilities": {
+        "strengths": ["一键生成", "音画同步"],
+        "bestFor": ["虚拟主播", "数字人视频"],
+        "speed": "medium",
+        "quality": "high"
+      }
+    },
+
+    "infinite-digital-human": {
+      "appId": "2038499492558807041",
+      "alias": "infinite-digital-human",
+      "category": "video",
+      "webappName": "AIRix [API] Infinite021 语音图片数字人",
+      "modelName": "Infinite021",
+      "usageType": "语音图片数字人",
+      "description": "数字人视频生成。适用于：口播视频、虚拟形象。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "201": {
+          "nodeId": "201",
+          "nodeName": "LoadAudio",
+          "fieldName": "audio",
+          "type": "AUDIO",
+          "description": "UpAudio",
+          "descriptionEn": "UpAudio",
+          "processHint": "upload",
+          "constraints": {
+            "audio_upload": true
+          }
+        },
+        "133": {
+          "nodeId": "133",
+          "nodeName": "LoadImage",
+          "fieldName": "image",
+          "type": "IMAGE",
+          "description": "UpImage",
+          "descriptionEn": "UpImage",
+          "processHint": "upload",
+          "constraints": {
+            "image_upload": true
+          }
+        },
+        "209": {
+          "nodeId": "209",
+          "nodeName": "CR Text",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "VideoPrompt",
+          "descriptionEn": "VideoPrompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true
+          }
+        },
+        "207": {
+          "nodeId": "207",
+          "nodeName": "ImpactInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Width",
+          "descriptionEn": "Width",
+          "processHint": "direct",
+          "constraints": {
+            "min": 0,
+            "max": 9223372036854775807,
+            "step": 1
+          }
+        },
+        "211": {
+          "nodeId": "211",
+          "nodeName": "ImpactInt",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "Height",
+          "descriptionEn": "Height",
+          "processHint": "direct",
+          "constraints": {
+            "min": 0,
+            "max": 9223372036854775807,
+            "step": 1
+          }
+        }
+      },
+      "tags": ["digital-human", "video-generation", "lip-sync"],
+      "capabilities": {
+        "strengths": ["口型同步精准", "表情自然"],
+        "bestFor": ["口播视频", "虚拟形象"],
+        "speed": "medium",
+        "quality": "high"
       }
     }
   },
