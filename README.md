@@ -21,10 +21,12 @@
 
 ## 安装使用
 
+> ⚠️ **临时说明**：npm 包 `runninghub-mcp` 暂时不可用，请使用以下 GitHub 安装方式。
+
 ### 全局安装（推荐）
 
 ```bash
-npm install -g runninghub-mcp
+npm install -g AIRix315/RHMCP
 
 # 验证安装
 rhmcp --help
@@ -33,7 +35,13 @@ rhmcp --help
 ### 直接运行（无需安装）
 
 ```bash
-npx runninghub-mcp --stdio
+npx AIRix315/RHMCP --stdio
+```
+
+### 从 GitHub Release 安装指定版本
+
+```bash
+npm install -g AIRix315/RHMCP#v1.1.1
 ```
 
 ### 配置
@@ -148,7 +156,8 @@ npm version patch|minor|major
 # 2. 推送标签
 git push --tags
 
-# 3. GitHub Actions 自动发布到 NPM
+# 3. GitHub Actions 自动创建 Release
+# 注意：npm 发布暂不可用，用户需从 GitHub 安装
 ```
 
 ---
