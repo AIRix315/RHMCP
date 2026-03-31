@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
 import { AppConfig } from "../types.js";
-import { UserAppConfigSchema, validateUserApp, type UserAppConfig } from "../schemas/app-config.js";
+import { validateUserApp } from "../schemas/app-config.js";
 
 /**
  * 用户添加 APP 的输入 Schema
