@@ -61,13 +61,28 @@ export const executeAppTool = {
       throw new Error("需要提供 appId 或有效的 alias");
     }
 
-    // 2. 构建nodeInfoList
+    // 2. 构建nodeInfoList（支持多种参数匹配方式）
     const appConfig = apps[Object.keys(apps).find((k) => apps[k].appId === appId) ?? ""];
 
     const nodeInfoList: NodeInfo[] = [];
     if (appConfig?.inputs) {
-      for (const [paramName, paramConfig] of Object.entries(appConfig.inputs)) {
-        const value = args.params[paramName] ?? paramConfig.default;
+      for (const [key, paramConfig] of Object.entries(appConfig.inputs)) {
+        // 多模式匹配：优先级 nodeId > description > fieldName
+        let value = args.params[key]; //nodeId 匹配
+
+        if (value === undefined && paramConfig.description) {
+          value = args.params[paramConfig.description]; // description 匹配
+        }
+
+        if (value === undefined && paramConfig.fieldName) {
+          value = args.params[paramConfig.fieldName]; // fieldName 匹配（兼容）
+        }
+
+        // 使用默认值
+        if (value === undefined) {
+          value = paramConfig.default;
+        }
+
         if (value !== undefined) {
           nodeInfoList.push({
             nodeId: paramConfig.nodeId,

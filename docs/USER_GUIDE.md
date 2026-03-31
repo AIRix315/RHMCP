@@ -57,6 +57,7 @@ echo "RUNNINGHUB_API_KEY=your_api_key_here" > .env
 ```
 
 **service.json 示例：**
+
 ```json
 {
   "baseUrl": "auto",
@@ -232,6 +233,67 @@ Agent 根据上下文自动判断：
 ---
 
 ## 使用示例
+
+### Agent 参数匹配机制
+
+当 AI Agent 调用 `rh_execute_app` 时，参数匹配按以下优先级进行：
+
+1. **nodeId 匹配**：使用参数的nodeId 作为 key（最精确）
+2. **description 匹配**：使用 description 作为 key（推荐）
+3. **fieldName 匹配**：使用 fieldName 作为 key（兼容模式）
+
+#### 调用示例
+
+**方式 1：使用 description（推荐）**
+
+```json
+{
+  "alias": "my-app",
+  "params": {
+    "Width": 1024,
+    "Height": 768,
+    "Prompt": "一只可爱的猫咪"
+  }
+}
+```
+
+**方式 2：使用 nodeId**
+
+```json
+{
+  "alias": "my-app",
+  "params": {
+    "19": 1024,
+    "20": 768,
+    "16": "一只可爱的猫咪"
+  }
+}
+```
+
+**方式 3：查看参数列表后精确调用**
+
+```
+1. 先调用 rh_get_app_info 查看参数
+2. 根据返回的 description 编写参数
+```
+
+#### 处理同名参数
+
+当 APP 有多个同名参数时（如多个 `text`）：
+
+```json
+// APP 参数：
+// nodeId=250, fieldName="text", description="AudioPrompt"
+// nodeId=209, fieldName="text", description="VideoPrompt"
+
+// Agent 调用时用 description 区分：
+{
+  "params": {
+    "AudioPrompt": "大家好", // 匹配 nodeId=250
+    "VideoPrompt": "微笑招手" // 匹配 nodeId=209
+  }
+}
+```
 
 ### 文生图
 

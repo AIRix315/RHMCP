@@ -172,10 +172,10 @@ export const getAppInfoTool = {
     // 3. 解析 webappName
     const { modelName, usageType } = parseWebappName(result.data.webappName);
 
-    // 4. 转换输入参数并添加 processHint 和 constraints
+    // 4. 转换输入参数并用 nodeId 作为 key（确保唯一性）
     const inputs: Record<string, InputParam> = {};
     for (const node of result.data.nodeInfoList) {
-      inputs[node.fieldName] = {
+      inputs[node.nodeId] = {
         nodeId: node.nodeId,
         nodeName: node.nodeName,
         fieldName: node.fieldName,

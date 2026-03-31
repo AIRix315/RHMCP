@@ -1,4 +1,9 @@
 // RunningHub MCP - Core TypeScript Type Definitions
+//
+// 相关文档：
+// - APP 发布规范：docs/APP_PUBLISHING_SPEC.md
+// - 用户添加指南：docs/USER_ADD_APP_GUIDE.md
+// - Schema 定义：src/schemas/app-config.ts
 
 // ============================================
 // Configuration Types
@@ -14,14 +19,22 @@ export type BaseUrl = "auto" | "www.runninghub.cn" | "www.runninghub.ai";
 
 /**
  * 分层 APP 配置
- * - server: 从 GitHub 拉取的官方 APP 列表
+ *
+ * - server: 从 GitHub 拉取的官方 APP 列表（由维护者精选）
  * - user: 用户自定义 APP，不会被更新覆盖
+ *
+ * @see docs/APP_PUBLISHING_SPEC.md 公共APP发布规范
+ * @see docs/USER_ADD_APP_GUIDE.md 用户添加APP指南
  */
 export interface AppsConfig {
+  /** 服务端预配置的 APP，由平台维护（以 _ 开头的键为元数据） */
   server: Record<string, AppConfig>;
+  /** 用户自定义的 APP 配置 */
   user: Record<string, AppConfig>;
-  _updated?: string; // 更新时间戳
-  _source?: string; // 来源 URL
+  /** 更新时间戳（ISO 格式） */
+  _updated?: string;
+  /** 来源 URL */
+  _source?: string;
 }
 
 export interface RunningHubConfig {
@@ -72,12 +85,19 @@ export interface CoverInfo {
 
 /**
  * APP 能力描述
+ *
+ * 用于智能推荐和筛选，帮助 Agent 了解 APP 的优劣势。
  */
 export interface AppCapabilities {
-  strengths?: string[]; // 优势
-  bestFor?: string[]; // 最佳用途
-  limitations?: string[]; // 限制
+  /** 优势列表，如 ["中文理解强", "创意生成"] */
+  strengths?: string[];
+  /** 最佳用途，如 ["创意插图", "概念设计"] */
+  bestFor?: string[];
+  /** 限制说明，如 ["不支持超高清"] */
+  limitations?: string[];
+  /** 生成速度 */
   speed?: "fast" | "medium" | "slow";
+  /** 输出质量 */
   quality?: "low" | "medium" | "high" | "ultra";
 }
 
@@ -94,35 +114,86 @@ export interface InputConstraints {
   control_after_generate?: boolean;
 }
 
+/**
+ * APP 配置
+ *
+ * 字段分为必填、推荐、自动填充三类：
+ * - 必填：appId, alias, category（用户添加最小配置）
+ * - 推荐：modelName, usageType, description, mcpLevel, tags, capabilities
+ * - 自动：inputs, covers, webappName（从 API 获取）
+ *
+ * @see docs/APP_PUBLISHING_SPEC.md 字段标准详细说明
+ */
 export interface AppConfig {
+  // === 必填字段 ===
+  /** RunningHub APP 唯一标识（数字字符串） */
   appId: string;
+  /** APP 调用别名（小写字母+数字+连字符，3-40字符） */
   alias: string;
-  modelFamily?: string;
+  /** APP 类别 */
   category: "image" | "audio" | "video";
+
+  // === 推荐字段 ===
+  /** 底层模型名称，如 "Qwen-001"、"SDXL"、"Flux" */
+  modelName?: string;
+  /** 用途类型，如 "文生图"、"提示词改图" */
+  usageType?: string;
+  /** 功能描述（建议30-50字，包含适用场景） */
   description?: string;
-  webappName?: string; // API 返回的完整名称
-  modelName?: string; // 从 webappName 提取的模型名
-  usageType?: string; // 从 webappName 提取的用途
-  covers?: CoverInfo[]; // 效果预览图
-  inputs: Record<string, InputParam>;
-  outputs?: string[];
-  constraints?: Record<string, Constraint>;
-  capabilities?: AppCapabilities;
-  tags?: string[];
+  /** MCP 兼容性等级，用于判断 Agent 是否可自动调用 */
   mcpLevel?: "full" | "partial" | "manual";
+  /** 能力标签数组，用于筛选和语义匹配 */
+  tags?: string[];
+  /** 详细能力描述 */
+  capabilities?: AppCapabilities;
+
+  // === 自动填充字段 ===
+  /** 平台完整名称（从 API 获取） */
+  webappName?: string;
+  /** 效果预览图（从 API 获取） */
+  covers?: CoverInfo[];
+  /** 输入参数配置（从 API 自动填充） */
+  inputs: Record<string, InputParam>;
+
+  // === 可选字段 ===
+  /** 模型系列（用于自动导入规则） */
+  modelFamily?: string;
+  /** 输出类型列表 */
+  outputs?: string[];
+  /** 参数约束覆盖 */
+  constraints?: Record<string, Constraint>;
+  /** 是否推荐为默认 */
   default?: boolean;
 }
 
+/**
+ * 输入参数配置
+ *
+ * processHint 用于提示 Agent 如何处理参数：
+ * - direct: 可直接通过 API 设置（STRING/INT/FLOAT/LIST/SWITCH）
+ * - upload: 需要先上传文件（IMAGE/AUDIO/VIDEO）
+ * - manual: 需要 GUI 手动操作（LAYER/MASK/TRAJECTORY）
+ */
 export interface InputParam {
+  /** 节点 ID */
   nodeId: string;
+  /** 节点名称 */
   nodeName?: string;
+  /** 字段名称 */
   fieldName: string;
-  type: string; // 动态类型，不硬编码枚举
+  /** 字段类型（STRING/INT/FLOAT/IMAGE/AUDIO/VIDEO/LIST/SWITCH 等） */
+  type: string;
+  /** 参数描述（中文） */
   description?: string;
+  /** 参数描述（英文） */
   descriptionEn?: string;
+  /** 默认值 */
   default?: string | number;
-  options?: string[]; // LIST/INT 的选项值
+  /** LIST 类型的选项值 */
+  options?: string[];
+  /** 参数处理方式提示 */
   processHint?: "direct" | "upload" | "manual";
+  /** 参数约束 */
   constraints?: InputConstraints;
 }
 
