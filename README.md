@@ -10,12 +10,13 @@
 
 ## 文档导航
 
-| 客户端             | 文档                               |
-| ------------------ | ---------------------------------- |
-| **OpenCode**       | [配置指南](docs/OpenCode-setup.md) |
-| **OpenClaw**       | [配置指南](docs/OpenClaw-setup.md) |
-| **Claude Desktop** | 参考 OpenCode 配置                 |
-| **常见问题**       | [FAQ](docs/openclaw/FAQ.md)        |
+| 客户端             | 文档                                    |
+| ------------------ | --------------------------------------- |
+| **OpenCode**       | [配置指南](docs/OpenCode-setup.md)      |
+| **OpenClaw**       | [配置指南](docs/OpenClaw-setup.md)      |
+| **OpenClaw Skill** | [Skill 指南](skills/openclaw/README.md) |
+| **Claude Desktop** | 参考 OpenCode 配置                      |
+| **常见问题**       | [FAQ](docs/openclaw/FAQ.md)             |
 
 ---
 
@@ -99,6 +100,65 @@ rhmcp --update-apps ~/.rhmcp/apps.json
   }
 }
 ```
+
+---
+
+## OpenClaw Skill
+
+如果你使用 **OpenClaw**，可以启用内置的 Skill 包装层，获得更友好的 Agent 指引：
+
+### 安装 Skill
+
+在 OpenClaw 配置中添加 Skill 路径：
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "rhmcp": {
+        "command": "node",
+        "args": ["E:/Projects/RHMCP/dist/server/index.js", "--stdio"],
+        "env": {
+          "RHMCP_CONFIG": "E:/Projects/RHMCP"
+        }
+      }
+    }
+  },
+  "skills": {
+    "entries": {
+      "rhmcp-skill": {
+        "enabled": true,
+        "path": "E:/Projects/RHMCP/skills/openclaw"
+      }
+    }
+  }
+}
+```
+
+### Skill 特性
+
+| 特性           | 说明                                             |
+| -------------- | ------------------------------------------------ |
+| **场景映射**   | 用户说"生成图片" → 自动选择 `qwen-text-to-image` |
+| **参数填充**   | 自动填充默认参数（width: 1024, height: 1024）    |
+| **存储决策**   | AUTO 模式自动选择最佳存储方式                    |
+| **链式工作流** | URL 自动传递，支持多步骤任务                     |
+| **错误处理**   | 友好提示 + 自动重试策略                          |
+
+### 调试工具
+
+```bash
+# 列出所有 APP
+node skills/openclaw/scripts/executor.mjs list
+
+# 查看 APP 详情
+node skills/openclaw/scripts/executor.mjs info qwen-text-to-image
+
+# 根据场景推荐
+node skills/openclaw/scripts/executor.mjs recommend generate-image
+```
+
+详细配置请参考 [skills/openclaw/README.md](skills/openclaw/README.md)。
 
 ---
 
