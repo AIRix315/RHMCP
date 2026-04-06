@@ -16,20 +16,26 @@ import { StorageConfig, StorageMode } from "../types.js";
  * 下载文件到本地
  */
 export async function downloadToFile(url: string, localPath: string): Promise<string> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`下载失败: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`下载失败: ${response.status} ${response.statusText}`);
+    }
+
+    const buffer = await response.arrayBuffer();
+    const dir = join(localPath, "..");
+
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true });
+    }
+
+    writeFileSync(localPath, Buffer.from(buffer));
+    return localPath;
+  } catch (error) {
+    throw new Error(
+      `下载文件失败: ${url}, ${error instanceof Error ? error.message : String(error)}`
+    );
   }
-
-  const buffer = await response.arrayBuffer();
-  const dir = join(localPath, "..");
-
-  if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
-  }
-
-  writeFileSync(localPath, Buffer.from(buffer));
-  return localPath;
 }
 
 /**
