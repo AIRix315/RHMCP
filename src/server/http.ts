@@ -13,6 +13,15 @@ import { createServer, registerTools, registerResources } from "./register.js";
 // CONFIG_PATH 用于传递配置目录，默认为 undefined（自动检测）
 const CONFIG_PATH = process.env.CONFIG_PATH ?? process.env.RHMCP_CONFIG ?? undefined;
 
+// 会话管理常量
+const MAX_SESSIONS = 100;
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 分钟
+
+interface SessionInfo {
+  transport: StreamableHTTPServerTransport;
+  createdAt: number;
+}
+
 export async function startHttpServer(port?: number): Promise<void> {
   // 1. 加载配置（异步）
   console.log("Loading configuration...");
@@ -54,7 +63,27 @@ export async function startHttpServer(port?: number): Promise<void> {
   app.use(express.json());
 
   // 7. 会话管理
-  const transports: Record<string, StreamableHTTPServerTransport> = {};
+  const transports: Record<string, SessionInfo> = {};
+
+  // 定期清理过期会话
+  const cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    let cleanedCount = 0;
+    for (const [id, session] of Object.entries(transports)) {
+      if (now - session.createdAt > SESSION_TIMEOUT_MS) {
+        delete transports[id];
+        cleanedCount++;
+      }
+    }
+    if (cleanedCount > 0) {
+      console.log(`Cleaned up ${cleanedCount} expired sessions`);
+    }
+  }, 60 * 1000); // 每分钟检查一次
+
+  // 确保服务器关闭时清理定时器
+  process.on("SIGTERM", () => {
+    clearInterval(cleanupInterval);
+  });
 
   app.post("/mcp", async (req, res) => {
     const sessionId = req.headers["mcp-session-id"] as string;
@@ -62,13 +91,19 @@ export async function startHttpServer(port?: number): Promise<void> {
     try {
       if (sessionId && transports[sessionId]) {
         // 复用现有会话
-        await transports[sessionId].handleRequest(req, res, req.body);
+        await transports[sessionId].transport.handleRequest(req, res, req.body);
       } else {
+        // 检查最大连接数限制
+        if (Object.keys(transports).length >= MAX_SESSIONS) {
+          res.status(503).json({ error: "Too many connections. Please try again later." });
+          return;
+        }
+
         // 创建新会话
         const transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => crypto.randomUUID(),
           onsessioninitialized: (id) => {
-            transports[id] = transport;
+            transports[id] = { transport, createdAt: Date.now() };
             console.log(`Session initialized: ${id}`);
           },
         });
