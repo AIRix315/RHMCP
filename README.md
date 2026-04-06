@@ -22,39 +22,52 @@
 
 ## 安装使用
 
-> ⚠️ **临时说明**：npm 包 `runninghub-mcp` 暂时不可用，请使用以下 GitHub 安装方式。
+> ⚠️ **重要说明**：npm 包 `runninghub-mcp` 暂时不可用。请使用以下 GitHub 安装方式。
 
-### 全局安装（推荐）
+### 推荐方式：GitHub 直接安装
 
 ```bash
+# 全局安装（推荐）
 npm install -g AIRix315/RHMCP
 
 # 验证安装
 rhmcp --help
 ```
 
-### 直接运行（无需安装）
+### 方式二：克隆仓库本地构建
 
 ```bash
-npx AIRix315/RHMCP --stdio
+# 克隆仓库
+git clone https://github.com/AIRix315/RHMCP.git
+cd RHMCP
+
+# 安装依赖
+npm ci
+
+# 构建
+npm run build
+
+# 全局链接
+npm link
 ```
 
-### 从 GitHub Release 安装指定版本
+### 方式三：指定版本安装
 
 ```bash
+# 从 GitHub Release 安装
 npm install -g AIRix315/RHMCP#v1.1.1
 ```
 
-### 配置
+### 配置步骤
 
 ```bash
-# 创建配置目录
+# 1. 创建配置目录
 mkdir -p ~/.rhmcp
 
-# 设置 API Key
+# 2. 设置 API Key（从 https://www.runninghub.cn 获取）
 echo "RUNNINGHUB_API_KEY=your_api_key_here" > ~/.rhmcp/.env
 
-# 创建 service.json
+# 3. 创建 service.json
 cat > ~/.rhmcp/service.json << 'EOF'
 {
   "baseUrl": "auto",
@@ -63,9 +76,15 @@ cat > ~/.rhmcp/service.json << 'EOF'
 }
 EOF
 
-# 创建 apps.json（运行更新命令填充官方 APP）
+# 4. 创建 apps.json（运行更新命令获取官方 APP 列表）
 rhmcp --update-apps ~/.rhmcp/apps.json
 ```
+
+> **baseUrl 说明**：
+>
+> - `"auto"`：自动检测账号区域
+> - `"www.runninghub.cn"`：国内站
+> - `"www.runninghub.ai"`：国际站
 
 ### MCP 客户端配置
 
@@ -141,24 +160,11 @@ rhmcp --update-apps ~/.rhmcp/apps.json
 | -------------- | ------------------------------------------------ |
 | **场景映射**   | 用户说"生成图片" → 自动选择 `qwen-text-to-image` |
 | **参数填充**   | 自动填充默认参数（width: 1024, height: 1024）    |
-| **存储决策**   | AUTO 模式自动选择最佳存储方式                    |
+| **存储决策**   | AUTO 模式智能选择最佳存储方式                    |
 | **链式工作流** | URL 自动传递，支持多步骤任务                     |
 | **错误处理**   | 友好提示 + 自动重试策略                          |
 
-### 调试工具
-
-```bash
-# 列出所有 APP
-node skills/openclaw/scripts/executor.mjs list
-
-# 查看 APP 详情
-node skills/openclaw/scripts/executor.mjs info qwen-text-to-image
-
-# 根据场景推荐
-node skills/openclaw/scripts/executor.mjs recommend generate-image
-```
-
-详细配置请参考 [skills/openclaw/README.md](skills/openclaw/README.md)。
+详细配置请参考 **[skills/openclaw/README.md](skills/openclaw/README.md)**。
 
 ---
 
@@ -206,19 +212,6 @@ npm test
 | **环境变量** | `RHMCP_CONFIG` 指向配置**目录**                                                  |
 
 ---
-
-## 发布流程（维护者）
-
-```bash
-# 1. 更新版本号
-npm version patch|minor|major
-
-# 2. 推送标签
-git push --tags
-
-# 3. GitHub Actions 自动创建 Release
-# 注意：npm 发布暂不可用，用户需从 GitHub 安装
-```
 
 ---
 
