@@ -47,6 +47,16 @@
     "url": "https://github.com/AIRix315/RHMCP/issues"
   },
   "homepage": "https://github.com/AIRix315/RHMCP#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js"
+    }
+  },
+  "types": "./dist/server/index.d.ts",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "dotenv": "^16.6.1",

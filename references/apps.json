@@ -438,6 +438,182 @@
         "speed": "medium",
         "quality": "high"
       }
+    },
+
+    "ltx23-digital-human": {
+      "appId": "2040262879986847745",
+      "alias": "ltx23-digital-human",
+      "category": "video",
+      "webappName": "AIRix [API] 023 LTX23 数字人",
+      "modelName": "LTX23",
+      "usageType": "数字人",
+      "description": "LTX23 数字人视频生成。（需登录获取更多信息）",
+      "mcpLevel": "partial",
+      "inputs": {},
+      "tags": ["digital-human", "video-generation", "ltx"],
+      "capabilities": {
+        "strengths": ["数字人生成"],
+        "bestFor": ["数字人视频"],
+        "speed": "medium"
+      }
+    },
+
+    "ltx23-first-last-frame-video": {
+      "appId": "2041120539950977025",
+      "alias": "ltx23-first-last-frame-video",
+      "category": "video",
+      "webappName": "AIRix [API] 040 LTX23 首尾帧生视频",
+      "modelName": "LTX23",
+      "usageType": "首尾帧生视频",
+      "description": "LTX23 首尾帧视频生成。（需登录获取更多信息）",
+      "mcpLevel": "partial",
+      "inputs": {},
+      "tags": ["video-generation", "frame-control", "ltx"],
+      "capabilities": {
+        "strengths": ["首尾帧控制"],
+        "bestFor": ["可控视频生成"],
+        "speed": "medium"
+      }
+    },
+
+    "ltx23-first-mid-last-frame-video": {
+      "appId": "2041123433374818306",
+      "alias": "ltx23-first-mid-last-frame-video",
+      "category": "video",
+      "webappName": "AIRix [API] 042 LTX23 首中尾帧生视频",
+      "modelName": "LTX23",
+      "usageType": "首中尾帧生视频",
+      "description": "LTX23 首中尾帧视频生成。（需登录获取更多信息）",
+      "mcpLevel": "partial",
+      "inputs": {},
+      "tags": ["video-generation", "frame-control", "ltx"],
+      "capabilities": {
+        "strengths": ["多帧控制"],
+        "bestFor": ["精准视频生成"],
+        "speed": "medium"
+      }
+    },
+
+    "ltx23-storyboard-infinite-duration": {
+      "appId": "2041147372696244226",
+      "alias": "ltx23-storyboard-infinite-duration",
+      "category": "video",
+      "webappName": "AIRix [API] 043 LTX23 分镜控制无限时长",
+      "modelName": "LTX23",
+      "usageType": "分镜控制无限时长",
+      "description": "LTX23 分镜控制无限时长视频生成。适用于：长视频创作、分镜控制。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "22": {
+          "nodeId": "22",
+          "nodeName": "LoadImage",
+          "fieldName": "image",
+          "type": "IMAGE",
+          "description": "UpImage",
+          "descriptionEn": "UpImage",
+          "processHint": "upload",
+          "constraints": {
+            "image_upload": true
+          }
+        },
+        "39": {
+          "nodeId": "39",
+          "nodeName": "LoadAudio",
+          "fieldName": "audio",
+          "type": "AUDIO",
+          "description": "UpAudio",
+          "descriptionEn": "UpAudio",
+          "processHint": "upload"
+        },
+        "140": {
+          "nodeId": "140",
+          "nodeName": "JWFloat",
+          "fieldName": "value",
+          "type": "FLOAT",
+          "description": "SetFPS",
+          "descriptionEn": "SetFPS",
+          "processHint": "direct",
+          "constraints": {
+            "min": -100000000000000000,
+            "max": 100000000000000000
+          }
+        },
+        "196": {
+          "nodeId": "196",
+          "nodeName": "INTConstant",
+          "fieldName": "value",
+          "type": "INT",
+          "description": "SetPassDuration",
+          "descriptionEn": "SetPassDuration",
+          "processHint": "direct",
+          "constraints": {
+            "min": -18446744073709552000,
+            "max": 18446744073709552000
+          }
+        },
+        "302": {
+          "nodeId": "302",
+          "nodeName": "Text Multiline",
+          "fieldName": "text",
+          "type": "STRING",
+          "description": "Prompt",
+          "descriptionEn": "Prompt",
+          "processHint": "direct",
+          "constraints": {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        }
+      },
+      "tags": ["video-generation", "storyboard", "long-video", "ltx"],
+      "capabilities": {
+        "strengths": ["分镜控制", "无限时长"],
+        "bestFor": ["长视频创作", "剧情视频"],
+        "speed": "medium",
+        "quality": "high"
+      }
+    },
+
+    "rtxvsr-video-upscale": {
+      "appId": "2040411956145819649",
+      "alias": "rtxvsr-video-upscale",
+      "category": "video",
+      "webappName": "AIRix [API] 090 RTXVSR 视频放大",
+      "modelName": "RTXVSR",
+      "usageType": "RTXVSR 视频放大",
+      "description": "RTXVSR 视频超分辨率放大。适用于：视频画质增强、分辨率提升。",
+      "mcpLevel": "partial",
+      "inputs": {
+        "3": {
+          "nodeId": "3",
+          "nodeName": "VHS_LoadVideo",
+          "fieldName": "video",
+          "type": "VIDEO",
+          "description": "UploadVideo",
+          "descriptionEn": "UploadVideo",
+          "processHint": "upload"
+        },
+        "10": {
+          "nodeId": "10",
+          "nodeName": "JWFloat",
+          "fieldName": "value",
+          "type": "FLOAT",
+          "description": "Scale",
+          "descriptionEn": "Scale",
+          "processHint": "direct",
+          "constraints": {
+            "min": -100000000000000000,
+            "max": 100000000000000000
+          }
+        }
+      },
+      "tags": ["video-upscale", "super-resolution", "quality-enhancement"],
+      "capabilities": {
+        "strengths": ["视频超分", "画质提升"],
+        "bestFor": ["视频增强", "低清转高清"],
+        "speed": "medium",
+        "quality": "high"
+      }
     }
   },
   "user": {
