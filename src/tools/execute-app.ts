@@ -2,6 +2,8 @@ import { z } from "zod";
 import { RunningHubClient } from "../api/client.js";
 import { NodeInfo, AppConfig, RunningHubConfig } from "../types.js";
 import { processOutput, ensureOutputDir } from "../utils/storage.js";
+import { mergeApps } from "../config/loader.js";
+import { ApiCode, isTaskWaiting, isConcurrentLimit } from "../constants/api-codes.js";
 
 const ExecuteAppSchema = z.object({
   appId: z.string().optional().describe("APP ID"),
@@ -16,29 +18,8 @@ const ExecuteAppSchema = z.object({
 function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
   // 优先使用新格式的 appsConfig
   if (config.appsConfig) {
-    const merged: Record<string, AppConfig> = {};
-
-    // 合并 server apps
-    if (config.appsConfig.server) {
-      for (const [alias, app] of Object.entries(config.appsConfig.server)) {
-        if (!alias.startsWith("_")) {
-          merged[alias] = app;
-        }
-      }
-    }
-
-    // 合并 user apps（覆盖 server 同名）
-    if (config.appsConfig.user) {
-      for (const [alias, app] of Object.entries(config.appsConfig.user)) {
-        if (!alias.startsWith("_")) {
-          merged[alias] = app;
-        }
-      }
-    }
-
-    return merged;
+    return mergeApps(config.appsConfig);
   }
-
   // 回退到旧格式
   return config.apps ?? {};
 }
@@ -161,16 +142,16 @@ export const executeAppTool = {
         return { taskId, status: "SUCCESS", outputs: processedOutputs };
       }
 
-      if (result.code === 805) {
+      if (result.code === ApiCode.TASK_FAILED) {
         throw new Error(`任务失败: ${JSON.stringify(result.data)}`);
       }
 
-      if (result.code === 804 || result.code === 813) {
+      if (isTaskWaiting(result.code)) {
         await new Promise((r) => setTimeout(r, interval * 1000));
         continue;
       }
 
-      if (result.code === 421 || result.code === 415) {
+      if (isConcurrentLimit(result.code)) {
         if (retries < maxRetries) {
           retries++;
           await new Promise((r) => setTimeout(r, interval * 1000));

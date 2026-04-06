@@ -3,11 +3,17 @@
  * 为 STDIO 和 HTTP 模式提供统一的注册逻辑
  */
 
+import { createRequire } from "module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import type { RunningHubConfig, AppConfig } from "../types.js";
 import type { RunningHubClient } from "../api/client.js";
+import { mergeApps } from "../config/loader.js";
+
+// 动态读取版本号
+const require = createRequire(import.meta.url);
+const { version } = require("../../package.json");
 
 // 导入所有工具
 import { uploadMediaTool } from "../tools/upload-media.js";
@@ -24,28 +30,11 @@ import { validateConfigTool } from "../tools/validate-config.js";
  * 获取合并后的 APP 配置
  */
 function getMergedApps(config: RunningHubConfig): Record<string, AppConfig> {
+  // 优先使用新格式的 appsConfig
   if (config.appsConfig) {
-    const merged: Record<string, AppConfig> = {};
-
-    if (config.appsConfig.server) {
-      for (const [alias, app] of Object.entries(config.appsConfig.server)) {
-        if (!alias.startsWith("_")) {
-          merged[alias] = app;
-        }
-      }
-    }
-
-    if (config.appsConfig.user) {
-      for (const [alias, app] of Object.entries(config.appsConfig.user)) {
-        if (!alias.startsWith("_")) {
-          merged[alias] = app;
-        }
-      }
-    }
-
-    return merged;
+    return mergeApps(config.appsConfig);
   }
-
+  // 回退到旧格式
   return config.apps ?? {};
 }
 
@@ -362,7 +351,7 @@ export function createServer(): McpServer {
   return new McpServer(
     {
       name: "rhmcp",
-      version: "1.0.0",
+      version: version, // 动态从 package.json 读取
     },
     {
       capabilities: {
