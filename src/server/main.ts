@@ -11,6 +11,17 @@ import { checkApp, formatCheckResult } from "../cli/check-app.js";
 import { createClient } from "../api/client.js";
 import { loadConfig } from "../config/loader.js";
 
+// 进程级错误处理
+process.on("uncaughtException", (error) => {
+  console.error("[RHMCP] 未捕获的异常:", error);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("[RHMCP] 未处理的Promise拒绝:", reason);
+  process.exit(1);
+});
+
 /**
  * 检测运行模式
  */

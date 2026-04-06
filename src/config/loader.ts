@@ -88,6 +88,11 @@ async function loadNewConfig(configDir?: string): Promise<RunningHubConfig> {
   const servicePath = join(dir, NEW_CONFIG_FILES.service);
   const serviceConfig = loadJsonFile(servicePath);
 
+  // 如果 service.json 不存在，使用默认配置并提示
+  if (!existsSync(servicePath)) {
+    console.error(`[RHMCP] Warning: ${NEW_CONFIG_FILES.service} not found, using defaults`);
+  }
+
   // 加载 apps.json
   const appsPath = join(dir, NEW_CONFIG_FILES.apps);
   const appsConfig = loadJsonFile(appsPath) as AppsConfig | null;
