@@ -18,6 +18,9 @@ export class RunningHubClient {
   async getAppInfo(webappId: string): Promise<ApiResponse<AppInfoResponse>> {
     const url = `https://${this.baseUrl}/api/webapp/apiCallDemo?apiKey=${this.apiKey}&webappId=${webappId}`;
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`获取APP信息失败: ${response.status} ${response.statusText}`);
+    }
     return response.json();
   }
 
@@ -37,6 +40,9 @@ export class RunningHubClient {
       method: "POST",
       body: formData,
     });
+    if (!response.ok) {
+      throw new Error(`上传文件失败: ${response.status} ${response.statusText}`);
+    }
     return response.json();
   }
 
@@ -59,6 +65,9 @@ export class RunningHubClient {
           nodeInfoList,
         }),
       });
+      if (!response.ok) {
+        throw new Error(`提交任务失败: ${response.status} ${response.statusText}`);
+      }
       return response.json();
     } finally {
       this.releaseSlot();
@@ -77,6 +86,9 @@ export class RunningHubClient {
         taskId,
       }),
     });
+    if (!response.ok) {
+      throw new Error(`查询任务失败: ${response.status} ${response.statusText}`);
+    }
     return response.json();
   }
 
