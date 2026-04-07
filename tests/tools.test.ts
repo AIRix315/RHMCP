@@ -308,10 +308,13 @@ describe("Tools E2E Tests", () => {
 
   describe("错误恢复", () => {
     it("应该处理网络超时", async () => {
-      fetchMock.mockRejectedValueOnce(new Error("Network timeout"));
+      // getWithRetry 会重试 MAX_RETRIES 次，需要 mock 所有重试
+      fetchMock.mockRejectedValue(new Error("Network timeout"));
 
       const client = createTestClient();
       await expect(client.getAppInfo(MOCK_APP_ID)).rejects.toThrow("Network timeout");
+      // 重试 3 次 + 首次调用 = 4 次尝试
+      expect(fetchMock).toHaveBeenCalledTimes(4);
     });
 
     it("应该处理无效响应", async () => {

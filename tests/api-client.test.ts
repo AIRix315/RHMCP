@@ -93,9 +93,12 @@ describe("RunningHubClient", () => {
     });
 
     it("应该处理网络错误", async () => {
-      fetchMock.mockRejectedValueOnce(new Error("Network error"));
+      // getWithRetry 会重试 MAX_RETRIES 次，需要 mock 所有重试
+      fetchMock.mockRejectedValue(new Error("Network error"));
 
       await expect(client.getAppInfo(MOCK_APP_ID)).rejects.toThrow("Network error");
+      // 重试 3 次 + 首次调用 = 4 次尝试
+      expect(fetchMock).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -221,11 +224,10 @@ describe("RunningHubClient", () => {
 
       const callArgs = fetchMock.mock.calls[0];
       expect(callArgs[0]).toContain("/task/openapi/outputs");
-      expect(callArgs[1].method).toBe("POST");
-
-      const body = JSON.parse(callArgs[1].body);
-      expect(body.apiKey).toBe(MOCK_API_KEY);
-      expect(body.taskId).toBe(taskId);
+      // queryTask 使用 GET 请求（带重试）
+      expect(callArgs[1].method).toBeUndefined();
+      expect(callArgs[0]).toContain(`taskId=${taskId}`);
+      expect(callArgs[0]).toContain(`apiKey=${MOCK_API_KEY}`);
     });
 
     it("应该处理运行中的任务", async () => {
