@@ -34,20 +34,41 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Create package for OpenClaw
+        run: |
+          mkdir -p package
+          cp -r dist package/
+          cp -r skills/openclaw package/skills
+          cp -r config package/
+          cp package.json package/
+          cp LICENSE package/
+          tar -czf rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz -C package .
+          sha256sum rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz > rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz.sha256
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           name: v${{ steps.version.outputs.VERSION }}
+          files: |
+            rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz
+            rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz.sha256
           body: |
             ## Installation
 
+            ### OpenClaw 一键安装
             ```bash
-            # Install globally
-            npm install -g runninghub-mcp@${{ steps.version.outputs.VERSION }}
-
-            # Or run directly with npx
-            npx runninghub-mcp@${{ steps.version.outputs.VERSION }} --stdio
+            curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/install-openclaw.sh | bash
             ```
+
+            ### 指定版本安装
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/install-openclaw.sh | bash -s ${{ steps.version.outputs.VERSION }}
+            ```
+
+            ### 手动安装
+            1. 下载 `rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz` 和对应的 `.sha256` 文件
+            2. 验证: `sha256sum -c rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz.sha256`
+            3. 解压: `tar -xzf rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz`
 
             **What's Changed**: See [CHANGELOG.md](CHANGELOG.md)
           draft: false

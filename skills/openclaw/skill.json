@@ -1,0 +1,9 @@
+{
+  "name": "rhmcp-skill",
+  "version": "1.1.1",
+  "description": "RunningHub AI 智能调用。文生图、图生图、视频生成、数字人、语音合成。",
+  "author": "AIRix315",
+  "requiredTools": [],
+  "tags": ["image-generation", "video-generation", "audio", "ai", "runninghub"],
+  "config": {}
+}

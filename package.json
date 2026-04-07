@@ -11,6 +11,8 @@
   },
   "files": [
     "dist/",
+    "skills/",
+    "config/",
     "README.md",
     "LICENSE"
   ],
