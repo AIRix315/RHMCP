@@ -59,13 +59,16 @@ export async function detectBaseUrl(apiKey: string, testAppId?: string): Promise
   if (successful.length > 0) {
     successful.sort((a, b) => a.latency - b.latency);
     const selected = successful[0];
-    console.error(`[RHMCP] 检测到账号注册于: ${selected.name} (${selected.url})`);
+    console.error(
+      `[RHMCP] 检测到账号注册于: ${selected.name} (${selected.url}, 延迟: ${selected.latency}ms)`
+    );
     return selected.url;
   }
 
   // 都失败，返回默认值
-  console.error("[RHMCP] 自动检测失败，使用默认站点: www.runninghub.cn");
-  console.error("[RHMCP] 如需手动指定，请在 service.json 中设置 baseUrl");
+  console.error("[RHMCP] 所有站点均无法连接");
+  console.error("[RHMCP] 请检查网络或 API Key 是否正确");
+  console.error("[RHMCP] 使用默认站点: www.runninghub.cn");
   return "www.runninghub.cn";
 }
 
