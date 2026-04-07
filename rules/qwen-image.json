@@ -1,19 +1,39 @@
 {
   "name": "qwen-image",
-  "description": "通义千问图像生成模型规则",
+  "description": "通义千问图像生成模型 - 中英文文本渲染能力强，AI Arena排名第一",
   "category": "image",
+  "capabilities": ["text-to-image", "creative", "chinese", "text-rendering"],
+  "useCases": ["文生图", "创意插图", "中文描述", "概念设计", "海报设计", "文字渲染"],
+  "modelVariants": {
+    "Qwen-Image-2.0": { "params": "7B", "maxRes": "2048×2048", "features": "轻量化、原生2K" },
+    "Qwen-Image-2512": { "params": "20B", "maxRes": "1664×1664", "features": "人物真实感提升" },
+    "Qwen-Image-Edit": { "params": "20B", "maxRes": "1664×1664", "features": "图像编辑" }
+  },
   "constraints": {
     "width": {
       "min": 256,
       "max": 2048,
       "step": 1,
-      "description": "图片宽度"
+      "recommended": [1024, 1472, 1664, 2048],
+      "description": "文字渲染推荐1024，通用推荐1664"
     },
     "height": {
       "min": 256,
       "max": 2048,
       "step": 1,
-      "description": "图片高度"
+      "recommended": [1024, 1104, 1664, 2048],
+      "description": "海报推荐1472×1104(4:3)"
+    },
+    "textTask": {
+      "minSteps": 36,
+      "recommendedSteps": 40,
+      "description": "文字任务步数≥36，避免加速模式",
+      "avoidAcceleration": true
+    },
+    "cfg": {
+      "range": "4.5-7.0",
+      "recommended": 5.5,
+      "description": "文本任务CFG 4.5-7.0最佳"
     }
   },
   "promptSpec": {
@@ -26,10 +46,7 @@
         "一只可爱的猫咪坐在窗台上，阳光透过窗户洒落",
         "未来城市的夜景，霓虹灯闪烁，赛博朋克风格"
       ],
-      "bad": [
-        "测试测试",
-        "123456"
-      ]
+      "bad": ["测试测试", "123456"]
     }
   }
 }

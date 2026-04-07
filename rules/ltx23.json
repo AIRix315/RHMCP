@@ -1,0 +1,44 @@
+{
+  "name": "ltx23",
+  "description": "LTX23 视频生成模型规则",
+  "category": "video",
+  "capabilities": ["image-to-video", "digital-human", "storyboard", "long-video"],
+  "useCases": ["图生视频", "数字人", "口播视频", "分镜控制", "长视频"],
+  "constraints": {
+    "width": {
+      "min": 640,
+      "max": 1920,
+      "step": 8,
+      "description": "视频宽度"
+    },
+    "height": {
+      "min": 360,
+      "max": 1080,
+      "step": 8,
+      "description": "视频高度"
+    },
+    "fps": {
+      "min": 15,
+      "max": 60,
+      "description": "帧率"
+    },
+    "duration": {
+      "min": 1,
+      "max": 300,
+      "description": "视频时长（秒）"
+    }
+  },
+  "promptSpec": {
+    "format": "natural",
+    "languages": ["en", "zh"],
+    "preferredLanguage": "en",
+    "maxLength": 3000,
+    "examples": {
+      "good": [
+        "A woman walking through a park, leaves falling, cinematic look",
+        "数字人口播：欢迎观看本期视频，今天我们聊聊AI"
+      ],
+      "bad": ["test"]
+    }
+  }
+}

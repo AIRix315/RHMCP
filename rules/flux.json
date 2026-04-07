@@ -1,29 +1,62 @@
 {
   "name": "flux",
-  "description": "FLUX 图像生成模型规则",
+  "description": "FLUX 图像生成模型 - Black Forest Labs出品，支持高清和超分",
   "category": "image",
+  "capabilities": ["text-to-image", "upscale", "high-quality", "multi-reference"],
+  "useCases": ["文生图", "高清图", "4K", "超分", "细节增强", "多图编辑"],
+  "modelVariants": {
+    "FLUX.2-klein-4B": {
+      "steps": 4,
+      "guidance": 1.0,
+      "cfg": false,
+      "negative": false,
+      "description": "实时生成，参数固定"
+    },
+    "FLUX.2-klein-9B": {
+      "steps": 4,
+      "guidance": 1.0,
+      "cfg": false,
+      "negative": false,
+      "description": "质量优先，参数固定"
+    },
+    "FLUX.2-dev": {
+      "steps": "28-50",
+      "guidance": 4.0,
+      "cfg": true,
+      "negative": true,
+      "description": "最高质量，参数可调"
+    }
+  },
   "constraints": {
     "width": {
       "min": 256,
       "max": 2048,
       "step": 8,
-      "description": "图片宽度，建议为8的倍数"
+      "recommended": [1024, 1280, 1920],
+      "description": "宽度建议为8的倍数，文字场景用1024"
     },
     "height": {
       "min": 256,
       "max": 2048,
       "step": 8,
-      "description": "图片高度，建议为8的倍数"
+      "recommended": [1024, 1280, 1920],
+      "description": "高度建议为8的倍数，文字场景用1024"
+    },
+    "textResolution": {
+      "recommended": 1024,
+      "description": "文字渲染场景推荐1024分辨率，高分辨率错误率增加"
     },
     "steps": {
-      "min": 1,
-      "max": 50,
-      "description": "生成步数"
+      "klein": { "fixed": 4, "description": "Klein模型固定4步，不可调" },
+      "dev": { "range": "28-50", "recommended": 35, "description": "Dev模型步数28-50" }
     },
-    "guidance_scale": {
-      "min": 1,
-      "max": 20,
-      "description": "引导强度"
+    "guidance": {
+      "klein": { "fixed": 1.0, "description": "Klein模型固定guidance=1.0，不可调" },
+      "dev": { "range": "2.0-7.0", "recommended": 4.0, "description": "Dev模型可调" }
+    },
+    "multiReference": {
+      "klein": { "maxImages": 4, "description": "Klein本地最多4张参考图" },
+      "pro": { "maxImages": 8, "pixelLimit": "输入+输出≤9MP", "description": "Pro API最多8张" }
     }
   },
   "promptSpec": {
@@ -36,9 +69,7 @@
         "a majestic mountain landscape at golden hour, photorealistic",
         "abstract art with vibrant colors, modern style"
       ],
-      "bad": [
-        "placeholder text"
-      ]
+      "bad": ["placeholder text"]
     }
   }
 }

@@ -164,6 +164,8 @@ export interface AppConfig {
   constraints?: Record<string, Constraint>;
   /** 是否推荐为默认 */
   default?: boolean;
+  /** 执行参数配置（从 description 解析） */
+  executionProfile?: ExecutionProfile;
 }
 
 /**
@@ -211,6 +213,22 @@ export interface RetryConfig {
   maxWaitTime: number;
   interval: number;
   appOverrides?: Record<string, Partial<RetryConfig>>;
+}
+
+/**
+ * APP 执行参数配置
+ *
+ * 从 description 中解析，用于推断轮询策略
+ */
+export interface ExecutionProfile {
+  /** 预估生成时间（秒） */
+  estimatedDuration: number;
+  /** 输出时长（秒），如视频15秒 */
+  outputDuration: number;
+  /** 时间比 = estimatedDuration / outputDuration */
+  timeRatio: number;
+  /** 建议轮询间隔（秒） */
+  pollInterval: number;
 }
 
 export interface LogConfig {
@@ -288,6 +306,10 @@ export interface ModelRule {
   category: "image" | "audio" | "video";
   constraints: Record<string, Constraint>;
   promptSpec?: PromptSpec;
+  /** 模型能力标签，如 ["text-to-image", "upscale"] */
+  capabilities?: string[];
+  /** 适用场景，如 ["高清图", "4K", "超分"] */
+  useCases?: string[];
 }
 
 export interface PromptSpec {

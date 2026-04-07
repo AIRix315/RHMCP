@@ -89,11 +89,18 @@ export const executeAppTool = {
 
     // 5. 同步模式：轮询等待结果
     const startTime = Date.now();
+
+    // 优先使用 executionProfile，其次使用 retry 配置，最后用默认值
     const maxWait =
+      appConfig?.executionProfile?.estimatedDuration ??
       (appConfig as { retry?: { maxWaitTime?: number } }).retry?.maxWaitTime ??
       config.retry.maxWaitTime;
+
     const interval =
-      (appConfig as { retry?: { interval?: number } }).retry?.interval ?? config.retry.interval;
+      appConfig?.executionProfile?.pollInterval ??
+      (appConfig as { retry?: { interval?: number } }).retry?.interval ??
+      config.retry.interval;
+
     const maxRetries =
       (appConfig as { retry?: { maxRetries?: number } }).retry?.maxRetries ??
       config.retry.maxRetries;

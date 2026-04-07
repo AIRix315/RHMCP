@@ -1,0 +1,98 @@
+{
+  "name": "wan22",
+  "description": "Wan2.2 视频生成模型 - MoE双专家架构，支持4K生成",
+  "category": "video",
+  "capabilities": ["text-to-video", "image-to-video", "4k", "moe"],
+  "useCases": ["文生视频", "图生视频", "4K高清视频", "音频驱动"],
+  "modelVariants": {
+    "T2V-A14B": {
+      "params": "27B总/14B活跃",
+      "vram": "80GB+",
+      "description": "MoE双专家，最高质量"
+    },
+    "I2V-A14B": { "params": "27B总/14B活跃", "vram": "80GB+", "description": "图生视频，MoE架构" },
+    "TI2V-5B": { "params": "5B", "vram": "24GB+", "description": "文本+图片混合，消费级可用" }
+  },
+  "constraints": {
+    "width": {
+      "min": 640,
+      "max": 1920,
+      "step": 1,
+      "recommended": [1280],
+      "description": "720P推荐1280宽度"
+    },
+    "height": {
+      "min": 360,
+      "max": 1080,
+      "step": 1,
+      "recommended": [720],
+      "description": "720P推荐720高度"
+    },
+    "fps": {
+      "min": 24,
+      "max": 50,
+      "description": "帧率范围"
+    },
+    "num_frames": {
+      "min": 16,
+      "max": 120,
+      "vram24GB": "≤14帧",
+      "description": "24GB显存建议≤14帧"
+    },
+    "num_inference_steps": {
+      "fast": "20-30",
+      "quality": "50-100",
+      "recommended": 50,
+      "description": "MoE自动分配步数"
+    }
+  },
+  "promptSpec": {
+    "format": "natural",
+    "languages": ["zh", "en"],
+    "preferredLanguage": "en",
+    "optimalLength": "80-120词",
+    "structure": "[镜头类型] + [相机运动] + [主体描述] + [美学风格] + [技术细节]",
+    "cameraMovements": {
+      "reliable": [
+        "pan_left",
+        "pan_right",
+        "tilt_up",
+        "tilt_down",
+        "dolly_in",
+        "dolly_out",
+        "pull_back",
+        "tracking_shot"
+      ],
+      "good": ["crash_zoom"],
+      "medium": ["whip_pan"]
+    },
+    "negativePrompt": "bright colors, overexposed, static, blurred details, subtitles, artwork, painting, still, worst quality, low quality, extra fingers, deformed",
+    "examples": {
+      "good": [
+        "A low angle shot of a jazz pianist in a dimly lit 1920s jazz bar. Camera pans left to reveal a girl playing the trumpet. Volumetric lighting, cinematic aesthetic, teal-and-orange color grading.",
+        "Camera slowly pushes in while her hair, dress, and fingers move subtly..."
+      ],
+      "bad": ["test video", "人走"]
+    }
+  },
+  "bestPractices": {
+    "vramLimited": "使用TI2V-5B + offload_model=True + t5_cpu=True",
+    "highQuality": "使用T2V-A14B + 24帧 + 50步",
+    "textRender": "无法生成可读文字，需要后期添加字幕",
+    "cameraMotion": "pan/tilt/dolly/pull_back运动可靠",
+    "promptLength": "详细连续段落，80-120词效果最佳"
+  },
+  "limitations": [
+    "VRAM需求高：最低24GB，推荐80GB+",
+    "无法生成可读文字，需后期合成字幕",
+    "复杂运动可能产生闪烁",
+    "Low-Noise专家有稳定性挑战"
+  ],
+  "performance": {
+    "vramRequirement": {
+      "minimum": "24GB (TI2V-5B + offload)",
+      "recommended": "80GB+ (A14B 720P)",
+      "highEnd": "141GB (长视频生成)"
+    }
+  }
+}

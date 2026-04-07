@@ -1,7 +1,47 @@
 {
   "name": "sdxl",
-  "description": "Stable Diffusion XL 模型参数规则",
+  "description": "Stable Diffusion XL - 高质量图像生成模型，支持超分辨率",
   "category": "image",
+  "capabilities": ["text-to-image", "image-to-image", "upscale", "high-resolution"],
+  "useCases": ["文生图", "图生图", "高清图", "4K", "超分", "细节增强"],
+  "modelVariants": {
+    "SDXL-Base": { "description": "基础模型，通用生成" },
+    "SDXL-Refiner": { "description": "精炼模型，提升细节" }
+  },
+  "constraints": {
+    "width": {
+      "min": 512,
+      "max": 2048,
+      "step": 8,
+      "recommended": [1024, 1280, 1920],
+      "description": "宽度必须是8的倍数"
+    },
+    "height": {
+      "min": 512,
+      "max": 2048,
+      "step": 8,
+      "recommended": [1024, 1280, 1920],
+      "description": "高度必须是8的倍数"
+    },
+    "steps": {
+      "min": 1,
+      "max": 100,
+      "recommended": 30,
+      "description": "生成步数，30-50步质量最佳"
+    },
+    "cfg_scale": {
+      "min": 1,
+      "max": 30,
+      "recommended": 7,
+      "description": "CFG Scale 提示词相关性"
+    },
+    "denoising_strength": {
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "description": "去噪强度，图生图时使用，推荐0.7-0.8"
+    }
+  },
   "constraints": {
     "width": {
       "min": 512,
@@ -42,10 +82,7 @@
         "a beautiful sunset over mountains, 4k, highly detailed",
         "portrait of a woman, soft lighting, professional photography"
       ],
-      "bad": [
-        "asdfghjkl",
-        ""
-      ]
+      "bad": ["asdfghjkl", ""]
     }
   }
 }

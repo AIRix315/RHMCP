@@ -1,12 +1,12 @@
 {
   "version": "1.0.0",
-  "updated": "2026-03-29",
+  "updated": "2026-04-07",
   "source": "https://github.com/AIRix315/RHMCP/tree/main/rules",
   "models": {
     "sdxl": {
       "file": "sdxl.json",
       "category": "image",
-      "description": "Stable Diffusion XL 模型规则"
+      "description": "Stable Diffusion XL 高质量图像生成模型"
     },
     "sd15": {
       "file": "sd15.json",
@@ -16,12 +16,34 @@
     "qwen-image": {
       "file": "qwen-image.json",
       "category": "image",
-      "description": "通义千问图像生成模型规则"
+      "description": "通义千问图像生成模型 - 中英文文本渲染强"
     },
     "flux": {
       "file": "flux.json",
       "category": "image",
-      "description": "FLUX 图像生成模型规则"
+      "description": "FLUX 图像生成模型 - 支持高清和多图编辑"
+    },
+    "ltx23": {
+      "file": "ltx23.json",
+      "category": "video",
+      "description": "LTX-2.3 视频生成模型 - 数字人和图生视频"
+    },
+    "wan22": {
+      "file": "wan22.json",
+      "category": "video",
+      "description": "Wan2.2 视频生成模型 - MoE双专家架构"
+    },
+    "qwentts": {
+      "file": "qwentts.json",
+      "category": "audio",
+      "description": "QwenTTS 语音合成模型 - 多语言情感控制"
+    },
+    "indextts": {
+      "file": "indextts.json",
+      "category": "audio",
+      "description": "IndexTTS 零样本声音克隆模型"
     }
+  }
+}
   }
 }

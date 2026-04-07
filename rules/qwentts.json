@@ -1,0 +1,129 @@
+{
+  "name": "qwentts",
+  "description": "QwenTTS 语音合成模型 - 支持多语言、情感控制的TTS",
+  "category": "audio",
+  "capabilities": [
+    "text-to-speech",
+    "multi-language",
+    "emotion-control",
+    "voice-cloning",
+    "realtime"
+  ],
+  "useCases": ["语音合成", "配音制作", "有声书", "导航播报", "实时对话"],
+  "constraints": {
+    "textLength": {
+      "flash": {
+        "max": 600,
+        "unit": "characters",
+        "description": "Flash版本按字符计费，最大600字符"
+      },
+      "tts": {
+        "max": 512,
+        "unit": "tokens",
+        "description": "标准版本最大512 Token"
+      },
+      "longTextHandling": "超过限制需分段处理"
+    },
+    "instructions": {
+      "maxLength": 1600,
+      "unit": "tokens",
+      "description": "情感控制指令最大1600 Token，仅Instruct系列支持",
+      "supportedModels": ["qwen3-tts-instruct-flash"]
+    },
+    "audio": {
+      "sampleRate": [16000, 22050, 24000],
+      "defaultSampleRate": 24000,
+      "urlExpiry": "24小时",
+      "description": "非流式返回的URL有效期24小时，流式Base64不受限"
+    }
+  },
+  "promptSpec": {
+    "format": "text",
+    "languages": [
+      "Chinese",
+      "English",
+      "Japanese",
+      "Korean",
+      "German",
+      "French",
+      "Russian",
+      "Portuguese",
+      "Spanish",
+      "Italian"
+    ],
+    "defaultLanguage": "Chinese",
+    "dialectSupport": ["四川话", "北京话"],
+    "autoDetect": "设置language_type=Auto可自动识别语言"
+  },
+  "emotionControl": {
+    "description": "仅Instruct系列支持情感控制",
+    "method": 3,
+    "parameters": {
+      "instructions": {
+        "type": "string",
+        "maxLength": 1600,
+        "description": "自然语言描述语音风格，如'年轻活泼的女性声音，语速较快'"
+      },
+      "optimize_instructions": {
+        "type": "boolean",
+        "default": true,
+        "description": "优化指令以提升自然度"
+      }
+    },
+    "dimensions": ["语速", "语调", "情感", "音色", "场景"],
+    "examples": {
+      "good": [
+        "年轻活泼的女性声音，语速较快，适合介绍时尚产品",
+        "沉稳的中年男性，语速缓慢，音色低沉有磁性",
+        "温柔知性的女性，30岁左右，语调平和，适合有声书"
+      ],
+      "bad": ["好听的声音", "像某明星的声音"]
+    }
+  },
+  "voicePresets": {
+    "Cherry": { "gender": "female", "style": "自然清晰", "languages": "多语言" },
+    "Longyuan": { "gender": "male", "style": "沉稳", "languages": "中文" },
+    "Zhichu": { "gender": "female", "style": "温柔", "languages": "中文" },
+    "Zhishuo": { "gender": "male", "style": "专业", "languages": "中文" },
+    "Jingjing": { "gender": "female", "style": "活泼", "languages": "中文" }
+  },
+  "models": {
+    "qwen3-tts-flash": {
+      "description": "按字符计费，成本低",
+      "useCase": "移动导航、教育",
+      "latency": "标准"
+    },
+    "qwen3-tts-instruct-flash": {
+      "description": "支持情感控制",
+      "useCase": "有声书、广播剧",
+      "latency": "标准"
+    },
+    "qwen3-tts-vc": {
+      "description": "声音复刻",
+      "useCase": "品牌声音定制",
+      "requirements": "需要10-20秒音频样本"
+    },
+    "qwen3-tts-vd-realtime": {
+      "description": "实时流式，97ms延迟",
+      "useCase": "实时对话",
+      "transport": "WebSocket"
+    }
+  },
+  "bestPractices": {
+    "language": "明确指定language_type获得最佳发音",
+    "longText": "每段≤600字符，分段处理",
+    "voiceCloning": "提供3-10秒清晰音频，无背景噪音",
+    "emotion": "使用具体描述，避免模糊词汇如'好听的声音'",
+    "urlExpiry": "音频URL 24小时有效，流式返回Base64不受限"
+  },
+  "limitations": [
+    "指令仅中英文支持",
+    "声音描述不能模仿特定人物（版权限制）",
+    "target_model必须与合成模型一致",
+    "长文本需分段处理"
+  ],
+  "performance": {
+    "firstPacketLatency": "97ms（实时模式）",
+    "generationSpeed": "实时音频生成，无质量衰减"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "name": "indextts",
+  "description": "IndexTTS 语音合成模型 - 零样本声音克隆、情感独立控制",
+  "category": "audio",
+  "capabilities": ["text-to-speech", "voice-cloning", "emotion-control", "duration-control"],
+  "useCases": ["声音克隆", "语音合成", "配音", "视频配音"],
+  "constraints": {
+    "textLength": {
+      "max": 600,
+      "unit": "characters",
+      "description": "最大600字符，超出需分段"
+    },
+    "referenceAudio": {
+      "minDuration": 3,
+      "maxDuration": 10,
+      "optimalDuration": 5,
+      "format": ["WAV", "MP3"],
+      "description": "参考音频3-10秒最佳，5秒可达85%+相似度",
+      "quality": "清晰录音、无背景噪音"
+    },
+    "emotionVector": {
+      "dimensions": 8,
+      "labels": [
+        "happy",
+        "angry",
+        "sad",
+        "afraid",
+        "disgusted",
+        "melancholic",
+        "surprised",
+        "calm"
+      ],
+      "range": "0.0-1.2",
+      "sumConstraint": "所有维度总和≤1.5",
+      "description": "8维情感向量，总和≤1.5，SDK内部自动normalize"
+    },
+    "audio": {
+      "sampleRate": [16000, 22050, 24000],
+      "defaultSampleRate": 24000,
+      "streamMode": true
+    }
+  },
+  "promptSpec": {
+    "format": "text",
+    "languages": ["Chinese", "English"],
+    "pinyinSupport": "支持中文拼音控制，如'做DE5很好'格式"
+  },
+  "emotionControl": {
+    "methods": {
+      "0": {
+        "name": "无情感参考",
+        "required": ["spk_audio_file"],
+        "description": "仅使用音色参考"
+      },
+      "1": {
+        "name": "情感音频",
+        "required": ["spk_audio_file", "emo_audio_file"],
+        "description": "从情感音频提取情绪"
+      },
+      "2": {
+        "name": "情感向量",
+        "required": ["spk_audio_file", "emo_vec"],
+        "description": "8维向量精确控制，总和≤1.5"
+      },
+      "3": {
+        "name": "情感文本",
+        "required": ["spk_audio_file", "emo_text"],
+        "description": "自然语言描述情感"
+      }
+    },
+    "alpha": {
+      "parameter": "emo_alpha",
+      "range": "0.0-1.0",
+      "recommended": 0.6,
+      "description": "情感融合权重，推荐0.6获得更自然效果"
+    }
+  },
+  "parameters": {
+    "speed": { "range": "0.1-4.0", "default": 1.0 },
+    "gain": { "range": "0.1-10.0", "default": 1.0 },
+    "interval_silence": { "default": 200, "unit": "ms" },
+    "use_random": { "default": false, "description": "设为false保证克隆质量" }
+  },
+  "bestPractices": {
+    "referenceAudio": "使用3-10秒清晰音频，5秒可达85%+相似度",
+    "emotionAlpha": "emo_alpha推荐0.6",
+    "cloningQuality": "use_random=False保证克隆质量一致",
+    "emotionVector": "注意总和≤1.5，SDK会自动偏置和normalize"
+  },
+  "limitations": [
+    "许可证限制：不能用于训练其他模型",
+    "中文拼音控制支持，如'做DE5很好'格式",
+    "情感向量总和必须≤1.5"
+  ],
+  "versions": {
+    "IndexTTS-1.0": { "release": "2025-03", "description": "初始版本，零样本克隆" },
+    "IndexTTS-1.5": { "release": "2025-05", "description": "提升英文性能与稳定性" },
+    "IndexTTS-2": { "release": "2025-09", "description": "情感+音色解耦、时长控制" }
+  }
+}
