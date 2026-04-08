@@ -53,13 +53,20 @@ fi
 echo "📋 更新 APP 列表..."
 node "$INSTALL_DIR/dist/server/index.js" --update-apps "$HOME/.rhmcp/apps.json" 2>/dev/null || true
 
-# 输出配置片段
-cat << 'EOF'
+# 复制模型规则
+if [ -d "$INSTALL_DIR/rules" ]; then
+  echo "📋 复制模型规则..."
+  cp -r "$INSTALL_DIR/rules" "$HOME/.rhmcp/" 2>/dev/null || true
+fi
+
+# 输出配置片段（自动替换路径）
+cat << EOF
 
 ✅ 安装完成
 
 OpenClaw 配置（添加到 ~/.openclaw/openclaw.json）：
 
+$(cat << 'JSONCONFIG'
 {
   "mcp": {
     "servers": {
@@ -76,10 +83,12 @@ OpenClaw 配置（添加到 ~/.openclaw/openclaw.json）：
     }
   }
 }
+JSONCONFIG
+) | sed "s|INSTALL_DIR|$INSTALL_DIR|g" | sed "s|CONFIG_DIR|$HOME/.rhmcp|g")
 
-替换：
-  INSTALL_DIR = 实际安装路径
-  CONFIG_DIR = ~/.rhmcp
+⚠️ MCP Server 和 Skills 两项都必须配置！
 
-重启 OpenClaw，首次使用提示配置 RUNNINGHUB_API_KEY。
+下一步：
+  1. 创建 ~/.rhmcp/.env 文件，写入：RUNNINGHUB_API_KEY=your_api_key
+  2. 重启 OpenClaw
 EOF

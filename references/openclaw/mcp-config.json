@@ -1,14 +1,24 @@
 {
   "_comment": "OpenClaw MCP 配置示例 - 复制到 ~/.openclaw/openclaw.json",
+  "_note": "请将 /home/user/.rhmcp 替换为实际安装路径",
+  "_note2": "API Key 建议放在 ~/.rhmcp/.env 文件中",
 
   "mcp": {
     "servers": {
       "rhmcp": {
-        "command": "npx",
-        "args": ["runninghub-mcp", "--stdio"],
+        "command": "node",
+        "args": ["/home/user/.rhmcp/dist/server/index.js", "--stdio"],
         "env": {
-          "RUNNINGHUB_API_KEY": "your_api_key_here"
+          "RHMCP_CONFIG": "/home/user/.rhmcp"
         }
+      }
+    }
+  },
+  "skills": {
+    "entries": {
+      "rhmcp-skill": {
+        "enabled": true,
+        "path": "/home/user/.rhmcp/skills/openclaw"
       }
     }
   }

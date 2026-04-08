@@ -39,6 +39,7 @@ jobs:
           mkdir -p package
           cp -r dist package/
           cp -r skills/openclaw package/skills
+          cp -r rules package/
           cp -r config package/
           cp package.json package/
           cp LICENSE package/
