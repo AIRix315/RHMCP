@@ -46,8 +46,15 @@ jobs:
           tar -czf rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz -C package .
           sha256sum rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz > rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz.sha256
 
+          # 验证文件创建成功
+          echo "📦 Package files:"
+          ls -lh rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.*
+          echo ""
+          echo "🔐 SHA256 checksum:"
+          cat rhmcp-openclaw-${{ steps.version.outputs.VERSION }}.tar.gz.sha256
+
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: v${{ steps.version.outputs.VERSION }}
           files: |
@@ -74,3 +81,5 @@ jobs:
             **What's Changed**: See [CHANGELOG.md](CHANGELOG.md)
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
