@@ -1,11 +1,3 @@
----
-name: rhmcp-install
-description: RHMCP OpenClaw 安装部署指南。Use when user wants to install or setup RHMCP for OpenClaw.
-type: installation
-homepage: https://github.com/AIRix315/RHMCP
-license: MIT
----
-
 # RHMCP OpenClaw 安装指南
 
 ## 前置要求
@@ -20,7 +12,7 @@ license: MIT
 curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/install-openclaw.sh | bash
 
 # 安装指定版本
-curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/install-openclaw.sh | bash -s 1.1.2
+curl -fsSL https://raw.githubusercontent.com/AIRix315/RHMCP/main/install-openclaw.sh | bash -s 1.1.1
 ```
 
 安装脚本会：
