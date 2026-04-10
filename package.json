@@ -41,9 +41,13 @@
     "openclaw",
     "claude"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AIRix315/RHMCP.git"
+    "url": "git+https://github.com/AIRix315/RHMCP.git"
   },
   "bugs": {
     "url": "https://github.com/AIRix315/RHMCP/issues"
