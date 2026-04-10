@@ -1,5 +1,5 @@
 {
-  "name": "runninghub-mcp",
+  "name": "rhmcp",
   "version": "1.1.1",
   "description": "RunningHub AI Platform MCP Server - 支持 OpenCode、OpenClaw、Claude Desktop 等客户端",
   "author": "AIRix315",
